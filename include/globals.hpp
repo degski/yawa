@@ -138,6 +138,9 @@ void load_from_file_xml ( std::string const & object_name_, T & t_, fs::path && 
     istream.close ( );
 }
 
+void save_to_file ( json const & j_, std::string const & name_ );
+void load_from_file ( json & j_, std::string const & name_ );
+
 template<typename T>
 void save_to_file_json ( std::string const & object_name_, T const & t_, fs::path && path_, std::string && file_name_,
                          bool const append_ = false ) noexcept {

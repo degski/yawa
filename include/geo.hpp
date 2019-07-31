@@ -65,6 +65,6 @@ void load_keys ( );
 [[nodiscard]] std::string to_query_string ( std::string const & place_, std::string const & country_ );
 
 [[nodiscard]] std::string darksky_forcast_query_string ( location_t const & loc_ );
-[[nodiscard]] std::string darksky_forcast_query_string ( location_t const & loc_ );
+[[nodiscard]] std::string apixu_forcast_query_string ( location_t const & loc_ );
 
 [[nodiscard]] place_t const & place_data ( std::string const & place_, std::string const & country_ );

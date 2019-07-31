@@ -125,6 +125,19 @@ json query_url ( std::string const & url_ ) {
     return json::parse ( ss );
 }
 
+void save_to_file ( json const & j_, std::string const & name_ ) {
+    std::ofstream o ( g_app_data_path / ( name_ + std::string{ ".json" } ) );
+    o << std::setw ( 4 ) << j_ << std::endl;
+    o.flush ( );
+    o.close ( );
+}
+
+void load_from_file ( json & j_, std::string const & name_ ) {
+    std::ifstream i ( g_app_data_path / ( name_ + std::string{ ".json" } ) );
+    i >> j_;
+    i.close ( );
+}
+
 void sleep_for_milliseconds ( std::int32_t const milliseconds_ ) noexcept {
     std::this_thread::sleep_for ( std::chrono::milliseconds ( milliseconds_ ) );
 }
