@@ -104,23 +104,20 @@ json forcast_apixu ( std::string const & name_, std::string const & country_ ) {
     return forcast;
 }
 
+
+json forcast_darksky ( std::string const & name_, std::string const & country_ ) {
+    json const forcast = query_url ( darksky_forcast_query_string ( place_data ( name_, country_ ).location ) );
+    save_to_file ( forcast, "darksky_" + name_ + "_" + country_ );
+    return forcast;
+}
+
 int main ( ) {
 
     init ( );
     curlpp::Cleanup myCleanup;
 
-    std::string s;
-
-    json const forcast  = query_url ( darksky_forcast_query_string ( place_data ( "Acharavi", "Greece" ).location ) );
-
-    save_to_file ( forcast, "darksky" );
-
-    json j;
-
-    load_from_file ( j, "darksky" );
-
-    std::cout << j.dump ( 4 ) << nl;
-
+    json forcast_darksky{ load_from_file ( "darksky" ) };
+    std::cout << forcast_darksky.dump ( 4 ) << nl;
 
     return EXIT_SUCCESS;
 }

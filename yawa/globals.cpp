@@ -138,6 +138,12 @@ void load_from_file ( json & j_, std::string const & name_ ) {
     i.close ( );
 }
 
+json load_from_file ( std::string const & name_ ) {
+    json j;
+    load_from_file ( j, name_ );
+    return j;
+}
+
 void sleep_for_milliseconds ( std::int32_t const milliseconds_ ) noexcept {
     std::this_thread::sleep_for ( std::chrono::milliseconds ( milliseconds_ ) );
 }

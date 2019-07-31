@@ -89,7 +89,7 @@ template<typename T>
 }
 
 template<typename T>
-T mps_to_kmph ( T const mps_ ) noexcept {
+[[nodiscard]] T mps_to_kmph ( T const mps_ ) noexcept {
     return mps_ * ( T{ 3'600 } / T{ 1'000 } );
 }
 
@@ -140,6 +140,7 @@ void load_from_file_xml ( std::string const & object_name_, T & t_, fs::path && 
 
 void save_to_file ( json const & j_, std::string const & name_ );
 void load_from_file ( json & j_, std::string const & name_ );
+[[nodiscard]] json load_from_file ( std::string const & name_ );
 
 template<typename T>
 void save_to_file_json ( std::string const & object_name_, T const & t_, fs::path && path_, std::string && file_name_,
