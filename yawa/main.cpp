@@ -98,6 +98,12 @@ using json = nlohmann::json;
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
 
+json forcast_apixu ( std::string const & name_, std::string const & country_ ) {
+    json const forcast = query_url ( apixu_forcast_query_string ( place_data ( name_, country_ ).location ) );
+    save_to_file ( forcast, "apixu_" + name_ + "_" + country_ );
+    return forcast;
+}
+
 int main ( ) {
 
     init ( );
@@ -105,13 +111,13 @@ int main ( ) {
 
     std::string s;
 
-    json const forcast  = query_url ( apixu_forcast_query_string ( place_data ( "Acharavi", "Greece" ).location ) );
+    json const forcast  = query_url ( darksky_forcast_query_string ( place_data ( "Acharavi", "Greece" ).location ) );
 
-    save_to_file ( forcast, "apixu" );
+    save_to_file ( forcast, "darksky" );
 
     json j;
 
-    load_from_file ( j, "apixu" );
+    load_from_file ( j, "darksky" );
 
     std::cout << j.dump ( 4 ) << nl;
 
