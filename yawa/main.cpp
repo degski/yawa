@@ -154,7 +154,9 @@ struct App {
         m_render_window.setActive ( false );
         m_render_window.setMouseCursorGrabbed ( false );
         m_render_window.setMouseCursorVisible ( true );
+
         sf::makeWindowSeeThrough ( m_render_window );
+        sf::moveWindowBottom ( m_render_window );
 
         m_render_window_bounds = sf::FloatRect ( 0.0f, 0.0f, m_render_window.getSize ( ).x, m_render_window.getSize ( ).y );
 
@@ -257,20 +259,14 @@ class LastWindow {
     }
 };
 
-
-void moveWindowToBack ( HWND hWnd_ ) noexcept {
-    SetWindowPos ( hWnd_, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE );
-}
-
-
-int main ( ) {
+int main56868 ( ) {
 
     std::cout << LastWindow::get ( ) << std::endl;
 
     return EXIT_SUCCESS;
 }
 
-int maintyrty ( ) {
+int main ( ) {
 
     /*
 
