@@ -229,11 +229,12 @@ class LastWindow {
 
     static auto window_title ( HWND hWnd_ ) noexcept {
         #if GetWindowTextLength == GetWindowTextLengthW
-        std::wstring wt ( GetWindowTextLength ( hWnd_ ), 0 );
+        std::wstring wt ( GetWindowTextLengthW ( hWnd_ ), 0 );
+        GetWindowTextW ( hWnd_, wt.data ( ), wt.length ( ) );
         #else
-        std::string wt ( GetWindowTextLength ( hWnd_ ), 0 );
+        std::string wt ( GetWindowTextLengthA ( hWnd_ ), 0 );
+        GetWindowTextA ( hWnd_, wt.data ( ), wt.length ( ) );
         #endif
-        GetWindowText ( hWnd_, wt.data ( ), wt.length ( ) );
         return wt;
     }
 
@@ -255,6 +256,12 @@ class LastWindow {
         return s_last_before_progman;
     }
 };
+
+
+void moveWindowToBack ( HWND hWnd_ ) noexcept {
+    SetWindowPos ( hWnd_, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE | SWP_NOACTIVATE );
+}
+
 
 int main ( ) {
 
