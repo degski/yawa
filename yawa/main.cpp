@@ -105,8 +105,6 @@ using json = nlohmann::json;
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
-#include <Thor/Graphics.hpp>
-
 json forcast_query_apixu ( std::string const & name_, std::string const & country_ ) {
     json const forcast = query_url ( apixu_forcast_query_string ( place_data ( name_, country_ ).location ) );
     save_to_file ( forcast, "apixu_" + name_ + "_" + country_ );
@@ -225,40 +223,43 @@ struct App {
 };
 
 
-struct LastWindow {
+class LastWindow {
 
-    static inline HWND last_before_progman;
-    static inline bool found = false;
+    static inline HWND g_last_before_progman = nullptr;
+    static inline bool g_found;
 
-    static BOOL CALLBACK enumWindowCallback ( HWND hWnd, LPARAM lparam ) {
-        if ( ! found ) {
-            int length    = GetWindowTextLength ( hWnd );
-            char * buffer = new char[ length + 1 ];
-            GetWindowTextA ( hWnd, buffer, length + 1 );
-            std::string windowTitle ( buffer );
-
-            // Ignore windows if invisible or missing a title
-            if ( "Program Manager" == windowTitle ) {
-                found = true;
-                // std::cout << hWnd << ":  " << windowTitle << std::endl;
+    static BOOL CALLBACK enumWindowCallback ( HWND hWnd_, LPARAM lparam_ ) noexcept {
+        if ( not g_found ) {
+            #if GetWindowTextLength == GetWindowTextLengthW
+            std::wstring window_title ( GetWindowTextLength ( hWnd_ ), 0 );
+            #else
+            std::string window_title ( GetWindowTextLength ( hWnd_ ), 0 );
+            #endif
+            GetWindowText ( hWnd_, window_title.data ( ), window_title.length ( ) );
+            if ( TEXT ( "Program Manager" ) == window_title ) {
+                g_found = true;
+                // std::wcout << hWnd_ << L":  " << windowTitle << std::endl;
             }
             else {
-                last_before_progman = hWnd;
-                // std::cout << hWnd << ":  " << windowTitle << std::endl;
+                g_last_before_progman = hWnd_;
+                // std::wcout << hWnd_ << L":  " << windowTitle << std::endl;
             }
         }
         return TRUE;
     }
 
-    static HWND find ( ) {
+    public:
+
+    static HWND get ( ) noexcept {
+        g_found = false;
         EnumWindows ( enumWindowCallback, NULL );
-        return last_before_progman;
+        return g_last_before_progman;
     }
 };
 
 int main ( ) {
 
-    std::cout << LastWindow::find ( ) << std::endl;
+    std::cout << LastWindow::get ( ) << std::endl;
 
     return EXIT_SUCCESS;
 }
