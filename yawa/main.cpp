@@ -182,7 +182,7 @@ struct App {
     void construct_icons_map ( ) {
         sf::Image icons;
         sf::loadFromResource ( icons, __ICONS__ );
-        Icon::icon_size.x = static_cast<sf::Int32> ( icons.getSize ( ).x / descriptions_size ( ) );
+        Icon::icon_size.x = static_cast<sf::Int32> ( icons.getSize ( ).x ) / descriptions_size ( );
         Icon::icon_size.y = static_cast<sf::Int32> ( icons.getSize ( ).y );
         sf::IntRect rect{
             0,
@@ -190,13 +190,11 @@ struct App {
             Icon::icon_size.x,
             Icon::icon_size.y,
         };
-        for ( sf::Int32 i = 0; i < descriptions_size ( ); ++i, rect.left += rect.width ) {
-            std::string key{ g_descriptions [ i ] };
-            Icon icon;
+        for ( int i = 0; i < descriptions_size ( ); ++i, rect.left += rect.width ) {
+            Icon & icon = ( *m_icon_textures.emplace_hint ( std::end ( m_icon_textures ), std::string{ g_descriptions[ i ] }, Icon{} ) ).second;
             icon.texture.loadFromImage ( icons, rect );
-            icon.sprite.setTexture ( icon.texture );
             icon.texture.setSmooth ( true );
-            m_icon_textures.emplace_hint ( std::end ( m_icon_textures ), std::move ( key ), std::move ( icon ) );
+            icon.sprite.setTexture ( icon.texture );
         }
     }
 
@@ -221,9 +219,7 @@ struct App {
 
     void render_objects ( ) noexcept {
         m_render_window.clear ( sf::Color::Red );
-        /*
-        m_render_window.draw ( m_rim_sprite );
-        */
+        m_render_window.draw ( m_icon_textures [ "wi-alien" ].sprite );
         m_render_window.display ( );
     }
 };
