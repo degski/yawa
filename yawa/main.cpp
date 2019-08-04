@@ -225,8 +225,7 @@ struct App {
 
 class LastWindow {
 
-    static inline HWND g_last_before_progman;
-    static inline bool g_found;
+    static inline HWND s_last_before_progman;
 
     static auto window_title ( HWND hWnd_ ) noexcept {
         #if GetWindowTextLength == GetWindowTextLengthW
@@ -239,22 +238,21 @@ class LastWindow {
     }
 
     static BOOL CALLBACK enum_window_callback ( HWND hWnd_, LPARAM lparam_ ) noexcept {
-        if ( not g_found ) {
-            if ( TEXT ( "Program Manager" ) == window_title ( hWnd_ ) )
-                g_found = true;
-            else
-                g_last_before_progman = hWnd_;
+        if ( TEXT ( "Program Manager" ) != window_title ( hWnd_ ) ) {
+            s_last_before_progman = hWnd_;
+            return TRUE;
         }
-        return TRUE;
+        else {
+            return FALSE;
+        }
     }
 
     public:
 
     static HWND get ( ) noexcept {
-        g_last_before_progman = nullptr;
-        g_found = false;
+        s_last_before_progman = nullptr;
         EnumWindows ( enum_window_callback, NULL );
-        return g_last_before_progman;
+        return s_last_before_progman;
     }
 };
 
