@@ -225,25 +225,25 @@ struct App {
 
 class LastWindow {
 
-    static inline HWND g_last_before_progman = nullptr;
+    static inline HWND g_last_before_progman;
     static inline bool g_found;
 
-    static BOOL CALLBACK enumWindowCallback ( HWND hWnd_, LPARAM lparam_ ) noexcept {
+    static auto window_title ( HWND hWnd_ ) noexcept {
+        #if GetWindowTextLength == GetWindowTextLengthW
+        std::wstring wt ( GetWindowTextLength ( hWnd_ ), 0 );
+        #else
+        std::string wt ( GetWindowTextLength ( hWnd_ ), 0 );
+        #endif
+        GetWindowText ( hWnd_, wt.data ( ), wt.length ( ) );
+        return wt;
+    }
+
+    static BOOL CALLBACK enum_window_callback ( HWND hWnd_, LPARAM lparam_ ) noexcept {
         if ( not g_found ) {
-            #if GetWindowTextLength == GetWindowTextLengthW
-            std::wstring window_title ( GetWindowTextLength ( hWnd_ ), 0 );
-            #else
-            std::string window_title ( GetWindowTextLength ( hWnd_ ), 0 );
-            #endif
-            GetWindowText ( hWnd_, window_title.data ( ), window_title.length ( ) );
-            if ( TEXT ( "Program Manager" ) == window_title ) {
+            if ( TEXT ( "Program Manager" ) == window_title ( hWnd_ ) )
                 g_found = true;
-                // std::wcout << hWnd_ << L":  " << windowTitle << std::endl;
-            }
-            else {
+            else
                 g_last_before_progman = hWnd_;
-                // std::wcout << hWnd_ << L":  " << windowTitle << std::endl;
-            }
         }
         return TRUE;
     }
@@ -251,8 +251,9 @@ class LastWindow {
     public:
 
     static HWND get ( ) noexcept {
+        g_last_before_progman = nullptr;
         g_found = false;
-        EnumWindows ( enumWindowCallback, NULL );
+        EnumWindows ( enum_window_callback, NULL );
         return g_last_before_progman;
     }
 };
