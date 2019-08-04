@@ -1,4 +1,4 @@
-inline std::vector<std::string> const descriptions { 
+inline constexpr char const * descriptions[] { 
     "wi-alien",
     "wi-barometer",
     "wi-celsius",
