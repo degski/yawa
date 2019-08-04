@@ -62,6 +62,7 @@ namespace fs = std::filesystem;
 
 #include "geo.hpp"
 #include "globals.hpp"
+#include "weather.hpp"
 
 #include <date/date.h>
 #include <date/tz.h>
@@ -78,7 +79,6 @@ std::vector<char> loadFile ( String const & filename ) {
     return file;
 }
 
-
 // https://api.met.no/weatherapi/locationforecast/1.9/.json?lat=39.79&lon=19.81&msl=6
 
 void init ( ) {
@@ -90,7 +90,7 @@ void init ( ) {
 
 #include <nlohmann/json.hpp>
 
-// for convenience
+// for convenience.
 using json = nlohmann::json;
 
 #include <curlpp/cURLpp.hpp>
@@ -98,26 +98,44 @@ using json = nlohmann::json;
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
 
-json forcast_apixu ( std::string const & name_, std::string const & country_ ) {
+#include <SFML/Extensions.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Window.hpp>
+
+json forcast_query_apixu ( std::string const & name_, std::string const & country_ ) {
     json const forcast = query_url ( apixu_forcast_query_string ( place_data ( name_, country_ ).location ) );
     save_to_file ( forcast, "apixu_" + name_ + "_" + country_ );
     return forcast;
 }
 
-
-json forcast_darksky ( std::string const & name_, std::string const & country_ ) {
+json forcast_query_darksky ( std::string const & name_, std::string const & country_ ) {
     json const forcast = query_url ( darksky_forcast_query_string ( place_data ( name_, country_ ).location ) );
     save_to_file ( forcast, "darksky_" + name_ + "_" + country_ );
     return forcast;
 }
 
-int main ( ) {
+int main789798 ( ) {
 
     init ( );
     curlpp::Cleanup myCleanup;
 
-    json forcast_darksky{ load_from_file ( "darksky" ) };
+    /*
+
+    json forcast_apixu{ forcast_query_apixu ( "acharavi", "greece" ) };
+    std::cout << forcast_apixu.dump ( 4 ) << nl;
+
+    json forcast_darksky{ forcast_query_darksky ( "acharavi", "greece" ) };
     std::cout << forcast_darksky.dump ( 4 ) << nl;
+
+
+    json forcast_apixu{ load_from_file ( "apixu_acharavi_greece" ) };
+    std::cout << forcast_apixu.dump ( 4 ) << nl;
+
+    json forcast_darksky{ load_from_file ( "darksky_acharavi_greece" ) };
+    std::cout << forcast_darksky.dump ( 4 ) << nl;
+
+    */
 
     return EXIT_SUCCESS;
 }
@@ -143,7 +161,8 @@ int main684 ( ) {
     for ( auto const & f : fc[ "product" ][ "time" ] ) {
         if ( f[ "from" ] == f[ "to" ] ) {
             std::cout << f.dump ( ) << nl;
-            // std::cout << f[ "from" ].get<std::string> ( ) << ' ' << f["location"]["temperature"]["value"].get<std::string> ( ) << nl;
+            // std::cout << f[ "from" ].get<std::string> ( ) << ' ' << f["location"]["temperature"]["value"].get<std::string> ( ) <<
+    nl;
         }
     }
 
@@ -151,7 +170,6 @@ int main684 ( ) {
 
     return EXIT_SUCCESS;
 }
-
 
 int main7868767 ( ) {
 
@@ -175,11 +193,9 @@ int main7868767 ( ) {
         // By default the result goes to standard output.
         request.perform ( );
     }
-
     catch ( curlpp::RuntimeError & e ) {
         std::cout << e.what ( ) << std::endl;
     }
-
     catch ( curlpp::LogicError & e ) {
         std::cout << e.what ( ) << std::endl;
     }
@@ -235,12 +251,9 @@ int main5 ( ) {
     return EXIT_SUCCESS;
 }
 
-
-
-int main655676 () {
+int main655676 ( ) {
 
     auto & db = date::get_tzdb_list ( );
 
     return EXIT_SUCCESS;
-
 }

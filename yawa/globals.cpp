@@ -96,7 +96,6 @@ std::string get_timestamp_hours_utc_iso8601 ( ) noexcept {
     return s;
 }
 
-
 std::string get_timestamp ( ) noexcept {
     std::time_t rawtime = std::time ( nullptr );
     std::tm ptm;
@@ -193,7 +192,7 @@ void write_buffer ( std::wostringstream const & outbuf_ ) noexcept {
     WriteConsoleOutputCharacter ( hOut, outbuf_.str ( ).c_str ( ), ( DWORD ) outbuf_.str ( ).length ( ), topLeft, &dwCharsWritten );
 }
 
-void set_mode_unicode ( ) noexcept { _setmode ( _fileno ( stdout ), _O_U16TEXT ); }
+void set_mode_unicode ( ) noexcept { _setmode ( _fileno ( stdout ), _O_U8TEXT ); }
 
 bool hide_cursor ( ) noexcept {
     static HANDLE const hOut = GetStdHandle ( STD_OUTPUT_HANDLE );

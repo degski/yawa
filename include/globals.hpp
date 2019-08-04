@@ -225,4 +225,6 @@ void set_cursor_position ( int x_, int y_ ) noexcept;
 
 void write_buffer ( std::wostringstream const & outbuf_ ) noexcept;
 
+void set_mode_unicode ( ) noexcept;
+
 [[nodiscard]] bool hide_cursor ( ) noexcept;
