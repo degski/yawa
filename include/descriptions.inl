@@ -1,4 +1,4 @@
-inline constexpr char const * descriptions[] { 
+inline constexpr char const * g_descriptions[] {
     "wi-alien",
     "wi-barometer",
     "wi-celsius",

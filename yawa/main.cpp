@@ -26,6 +26,7 @@
 #include <cstdint>
 #include <cstdlib>
 
+#include <algorithm>
 #include <array>
 #include <chrono>
 #include <filesystem>
@@ -62,6 +63,7 @@ namespace fs = std::filesystem;
 
 #include "geo.hpp"
 #include "globals.hpp"
+#include "resource.h"
 #include "weather.hpp"
 
 #include <date/date.h>
@@ -103,6 +105,8 @@ using json = nlohmann::json;
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
+#include <Thor/Graphics.hpp>
+
 json forcast_query_apixu ( std::string const & name_, std::string const & country_ ) {
     json const forcast = query_url ( apixu_forcast_query_string ( place_data ( name_, country_ ).location ) );
     save_to_file ( forcast, "apixu_" + name_ + "_" + country_ );
@@ -115,12 +119,121 @@ json forcast_query_darksky ( std::string const & name_, std::string const & coun
     return forcast;
 }
 
-int main789798 ( ) {
+struct App {
+
+    // Draw stuff.
+
+    sf::ContextSettings m_context_settings;
+    sf::RenderWindow m_render_window;
+    sf::FloatRect m_render_window_bounds;
+
+    // Frames.
+
+    sf::Int32 m_frame_rate;
+    float m_frame_duration_as_microseconds;
+
+    // Resources.
+
+    sf::Font m_font_bold, m_font_regular, m_font_mono;
+
+    struct Icon {
+        sf::Texture texture;
+        sf::Sprite sprite;
+        static inline sf::Vector2i icon_size;
+    };
+
+    std::map<std::string, Icon> m_icon_textures;
+
+    sf::Event m_event;
+
+    App ( ) {
+
+        m_context_settings.antialiasingLevel = 8u;
+
+        m_render_window.create ( sf::VideoMode ( 1200u, 150u ), L"", sf::Style::None, m_context_settings );
+        m_render_window.setPosition ( { 360, 30 } );
+        m_render_window.setVerticalSyncEnabled ( true );
+        // m_render_window.requestFocus ( );
+        m_render_window.setMouseCursorGrabbed ( false );
+        m_render_window.setMouseCursorVisible ( true );
+        // sf::makeWindowSeeThrough ( m_render_window );
+
+        m_render_window_bounds = sf::FloatRect ( 0.0f, 0.0f, m_render_window.getSize ( ).x, m_render_window.getSize ( ).y );
+
+        // Frames.
+
+        m_frame_rate                     = sf::getScreenRefreshRate ( );
+        m_frame_duration_as_microseconds = 1'000'000.0f / m_frame_rate;
+
+        // Load fonts.
+
+        sf::loadFromResource ( m_font_bold, __FONT_BOLD__ );
+        sf::loadFromResource ( m_font_regular, __FONT_REGULAR__ );
+        sf::loadFromResource ( m_font_mono, __FONT_MONO__ );
+
+        // Load icons.
+
+        construct_icons_map ( );
+
+        m_render_window.clear ( sf::Color::Red );
+        m_render_window.display ( );
+    }
+
+    void construct_icons_map ( ) {
+        sf::Image icons;
+        sf::loadFromResource ( icons, __ICONS__ );
+        Icon::icon_size.x = static_cast<sf::Int32> ( icons.getSize ( ).x / descriptions_size ( ) );
+        Icon::icon_size.y = static_cast<sf::Int32> ( icons.getSize ( ).y );
+        sf::IntRect rect{
+            0,
+            0,
+            Icon::icon_size.x,
+            Icon::icon_size.y,
+        };
+        for ( sf::Int32 i = 0; i < descriptions_size ( ); ++i, rect.left += rect.width ) {
+            std::string key{ g_descriptions [ i ] };
+            Icon icon;
+            icon.texture.loadFromImage ( icons, rect );
+            icon.sprite.setTexture ( icon.texture );
+            icon.texture.setSmooth ( true );
+            m_icon_textures.emplace_hint ( std::end ( m_icon_textures ), std::move ( key ), std::move ( icon ) );
+        }
+    }
+
+    bool is_active ( ) const noexcept { return m_render_window.isOpen ( ); }
+
+    void run ( ) noexcept {
+        poll_events ( );
+        // update_state ( );
+        render_objects ( );
+    }
+
+    void poll_events ( ) noexcept {
+        if ( m_render_window.pollEvent ( m_event ) ) {
+            if ( sf::Event::Closed == m_event.type or
+                 ( sf::Event::KeyPressed == m_event.type and sf::Keyboard::Escape == m_event.key.code ) ) {
+                m_render_window.close ( );
+            }
+        }
+    }
+
+    void update_state ( ) noexcept {}
+
+    void render_objects ( ) noexcept {
+        m_render_window.clear ( sf::Color::Red );
+        /*
+        m_render_window.draw ( m_rim_sprite );
+        */
+        m_render_window.display ( );
+    }
+};
+
+int main ( ) {
+
+    /*
 
     init ( );
     curlpp::Cleanup myCleanup;
-
-    /*
 
     json forcast_apixu{ forcast_query_apixu ( "acharavi", "greece" ) };
     std::cout << forcast_apixu.dump ( 4 ) << nl;
@@ -128,14 +241,21 @@ int main789798 ( ) {
     json forcast_darksky{ forcast_query_darksky ( "acharavi", "greece" ) };
     std::cout << forcast_darksky.dump ( 4 ) << nl;
 
-
     json forcast_apixu{ load_from_file ( "apixu_acharavi_greece" ) };
     std::cout << forcast_apixu.dump ( 4 ) << nl;
+
+
 
     json forcast_darksky{ load_from_file ( "darksky_acharavi_greece" ) };
     std::cout << forcast_darksky.dump ( 4 ) << nl;
 
+    std::cout << sf::systemTime ( ) << nl;
     */
+    App app;
+
+    while ( app.is_active ( ) ) {
+        app.run ( );
+    }
 
     return EXIT_SUCCESS;
 }

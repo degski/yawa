@@ -43,4 +43,9 @@
     <None Include="..\LICENSE.md" />
     <None Include="..\README.md" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="yawa.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
 </Project>

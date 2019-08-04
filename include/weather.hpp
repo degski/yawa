@@ -73,3 +73,5 @@ inline constexpr char const * g_weather_icon[]{ "Empty",
                                                 "HeavySnow" };
 
 #include "descriptions.inl"
+
+inline constexpr std::size_t descriptions_size ( ) noexcept { return ( sizeof ( g_descriptions ) / sizeof ( g_descriptions[ 0 ] ) ); }
