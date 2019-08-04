@@ -153,10 +153,10 @@ struct App {
         m_render_window.create ( sf::VideoMode ( 1200u, 150u ), L"", sf::Style::None, m_context_settings );
         m_render_window.setPosition ( { 360, 30 } );
         m_render_window.setVerticalSyncEnabled ( true );
-        // m_render_window.requestFocus ( );
+        m_render_window.setActive ( false );
         m_render_window.setMouseCursorGrabbed ( false );
         m_render_window.setMouseCursorVisible ( true );
-        // sf::makeWindowSeeThrough ( m_render_window );
+        sf::makeWindowSeeThrough ( m_render_window );
 
         m_render_window_bounds = sf::FloatRect ( 0.0f, 0.0f, m_render_window.getSize ( ).x, m_render_window.getSize ( ).y );
 
@@ -175,7 +175,7 @@ struct App {
 
         construct_icons_map ( );
 
-        m_render_window.clear ( sf::Color::Red );
+        m_render_window.clear ( sf::Color::Transparent );
         m_render_window.display ( );
     }
 
@@ -218,13 +218,52 @@ struct App {
     void update_state ( ) noexcept {}
 
     void render_objects ( ) noexcept {
-        m_render_window.clear ( sf::Color::Red );
+        m_render_window.clear ( sf::Color::Transparent );
         m_render_window.draw ( m_icon_textures [ "wi-alien" ].sprite );
         m_render_window.display ( );
     }
 };
 
+
+struct LastWindow {
+
+    static inline HWND last_before_progman;
+    static inline bool found = false;
+
+    static BOOL CALLBACK enumWindowCallback ( HWND hWnd, LPARAM lparam ) {
+        if ( ! found ) {
+            int length    = GetWindowTextLength ( hWnd );
+            char * buffer = new char[ length + 1 ];
+            GetWindowTextA ( hWnd, buffer, length + 1 );
+            std::string windowTitle ( buffer );
+
+            // Ignore windows if invisible or missing a title
+            if ( "Program Manager" == windowTitle ) {
+                found = true;
+                // std::cout << hWnd << ":  " << windowTitle << std::endl;
+            }
+            else {
+                last_before_progman = hWnd;
+                // std::cout << hWnd << ":  " << windowTitle << std::endl;
+            }
+        }
+        return TRUE;
+    }
+
+    static HWND find ( ) {
+        EnumWindows ( enumWindowCallback, NULL );
+        return last_before_progman;
+    }
+};
+
 int main ( ) {
+
+    std::cout << LastWindow::find ( ) << std::endl;
+
+    return EXIT_SUCCESS;
+}
+
+int maintyrty ( ) {
 
     /*
 
@@ -373,3 +412,6 @@ int main655676 ( ) {
 
     return EXIT_SUCCESS;
 }
+
+
+// https://stackoverflow.com/questions/916259/win32-bring-a-window-to-top
