@@ -64,10 +64,24 @@ inline void from_json ( json const & j_, place_t & p_ ) {
     j_.at ( "country" ).get_to ( p_.country );
 }
 
-inline std::map<std::string, place_t> g_references;
-inline std::map<std::string, std::string> g_authenticate;
+struct geo_t {
+    std::string current;
+    std::map<std::string, place_t> places;
+};
 
-inline json g_places2;
+inline void to_json ( json & j_, geo_t const & r_ ) {
+    j_[ "current" ] = r_.current;
+    j_[ "places" ] = r_.places;
+}
+inline void from_json ( json const & j_, geo_t & r_ ) {
+    j_.at ( "current" ).get_to ( r_.current );
+    j_.at ( "places" ).get_to ( r_.places );
+}
+
+using auth_t = std::map<std::string, std::string>;
+
+inline geo_t g_geo;
+inline auth_t g_auth;
 
 void save_places ( );
 void load_places ( );

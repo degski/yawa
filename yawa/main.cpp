@@ -348,11 +348,7 @@ int main ( ) {
     init ( );
     curlpp::Cleanup myCleanup;
 
-    json pl;
-
-    pl[ "places" ] = json ( g_references );
-
-    std::cout << pl.dump ( 4 ) << nl;
+    save_keys ( );
 
     return EXIT_SUCCESS;
 }

@@ -42,11 +42,35 @@ std::string load_file ( std::string const & filename ) {
     return str;
 }
 
-void save_places ( ) { save_to_file_json ( "places", g_references, g_places ); }
-void load_places ( ) { load_from_file_json ( "places", g_references, g_places ); }
+void save_places ( ) {
+    json j = g_geo;
+    std::ofstream o ( g_places );
+    o << j.dump ( 4 ) << std::endl;
+    o.flush ( );
+    o.close ( );
+}
+void load_places ( ) {
+    json j;
+    std::ifstream i ( g_places );
+    i >> j;
+    i.close ( );
+    g_geo = j.get<geo_t> ( );
+}
 
-void save_keys ( ) { save_to_file_json ( "keys", g_authenticate, g_keys ); }
-void load_keys ( ) { load_from_file_json ( "keys", g_authenticate, g_keys ); }
+void save_keys ( ) {
+    json j = g_auth;
+    std::ofstream o ( g_keys );
+    o << j.dump ( 4 ) << std::endl;
+    o.flush ( );
+    o.close ( );
+}
+void load_keys ( ) {
+    json j;
+    std::ifstream i ( g_keys );
+    i >> j;
+    i.close ( );
+    g_auth = j.get<auth_t> ( );
+}
 
 std::string to_query_string ( std::string const & str_ ) {
     std::string s{ str_ };
@@ -82,7 +106,7 @@ std::string to_query_string ( std::string const & place_, std::string const & co
     constexpr char url[] = "https://api.darksky.net/forecast/";
     constexpr char tag[] = "?units=si&extend=hourly";
     std::string s;
-    s = { url + g_authenticate[ "darksky" ] + "/" + loc_.lat + "," + loc_.lng + tag };
+    s = { url + g_auth[ "darksky" ] + "/" + loc_.lat + "," + loc_.lng + tag };
     return s;
 }
 
@@ -90,15 +114,15 @@ std::string to_query_string ( std::string const & place_, std::string const & co
     constexpr char url[] = "https://api.apixu.com/v1/forecast.json?key=";
     constexpr char tag[] = "&days=10";
     std::string s;
-    s = { url + g_authenticate[ "apixu" ] + "&q=" + loc_.lat + "," + loc_.lng + tag };
+    s = { url + g_auth[ "apixu" ] + "&q=" + loc_.lat + "," + loc_.lng + tag };
     return s;
 }
 
 place_t const & place_data ( std::string const & place_, std::string const & country_ ) {
     static place_t const not_found{ { "not_found", "not_found" }, "not_found", "not_found", "not_found" };
     std::string place_country = to_query_string ( place_, country_ );
-    auto it                   = g_references.find ( place_country );
-    if ( std::cend ( g_references ) == it ) {
+    auto it                   = g_geo.places.find ( place_country );
+    if ( std::cend ( g_geo.places ) == it ) {
         json const location_query_result = query_url ( location_query_string ( place_country ) );
         if ( "OK" == location_query_result[ "status" ] ) {
             auto const location = location_query_result[ "results" ][ 0 ][ "geometry" ][ "location" ];
@@ -109,7 +133,7 @@ place_t const & place_data ( std::string const & place_, std::string const & cou
             data.elevation =
                 to_string ( query_url ( elevation_query_string ( data.location ) )[ 0 ][ "statistics" ][ "elevation" ][ "value" ]
                                 .get<int> ( ) );
-            place_t const & rv = g_references.emplace ( std::move ( place_country ), std::move ( data ) ).first->second;
+            place_t const & rv = g_geo.places.emplace ( std::move ( place_country ), std::move ( data ) ).first->second;
             save_places ( );
             return rv;
         }
