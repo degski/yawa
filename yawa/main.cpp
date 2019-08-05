@@ -144,6 +144,8 @@ struct App {
 
     sf::Event m_event;
 
+    sf::Color const m_color = sf::Color ( 108, 112, 95, 255 );
+
     App ( ) {
 
         m_context_settings.antialiasingLevel = 8u;
@@ -182,8 +184,17 @@ struct App {
     void construct_icons_map ( ) {
         sf::Image icons;
         sf::loadFromResource ( icons, __ICONS__ );
-        Icon::icon_size.x = static_cast<sf::Int32> ( icons.getSize ( ).x ) / descriptions_size ( );
+        Icon::icon_size.x = static_cast<sf::Int32> ( icons.getSize ( ).x );
         Icon::icon_size.y = static_cast<sf::Int32> ( icons.getSize ( ).y );
+        // Change to white.
+        for ( int y = 0; y < Icon::icon_size.y; ++y ) {
+            for ( int x = 0; x < Icon::icon_size.x; ++x ) {
+                auto alpha = icons.getPixel ( x, y ).a;
+                if ( alpha )
+                    icons.setPixel ( x, y, sf::Color ( m_color.r, m_color.g, m_color.b, alpha ) );
+            }
+        }
+        Icon::icon_size.x /= descriptions_size ( );
         sf::IntRect rect{
             0,
             0,
@@ -191,7 +202,9 @@ struct App {
             Icon::icon_size.y,
         };
         for ( int i = 0; i < descriptions_size ( ); ++i, rect.left += rect.width ) {
-            Icon & icon = ( *m_icon_textures.emplace_hint ( std::end ( m_icon_textures ), std::string{ g_descriptions[ i ] }, Icon{} ) ).second;
+            Icon & icon =
+                ( *m_icon_textures.emplace_hint ( std::end ( m_icon_textures ), std::string{ g_descriptions[ i ] }, Icon{} ) )
+                    .second;
             icon.texture.loadFromImage ( icons, rect );
             icon.texture.setSmooth ( true );
             icon.sprite.setTexture ( icon.texture );
@@ -219,24 +232,26 @@ struct App {
 
     void render_objects ( ) noexcept {
         m_render_window.clear ( sf::Color::Transparent );
-        m_render_window.draw ( m_icon_textures [ "wi-alien" ].sprite );
+        auto & s = m_icon_textures[ "wi-day-sunny" ].sprite;
+        m_render_window.draw ( s );
         m_render_window.display ( );
     }
 };
 
+// IsWindowVisible(hWnd)
 
 class LastWindow {
 
     static inline HWND s_last_before_progman;
 
     static auto window_title ( HWND hWnd_ ) noexcept {
-        #if GetWindowTextLength == GetWindowTextLengthW
+#if GetWindowTextLength == GetWindowTextLengthW
         std::wstring wt ( GetWindowTextLengthW ( hWnd_ ), 0 );
         GetWindowTextW ( hWnd_, wt.data ( ), wt.length ( ) );
-        #else
+#else
         std::string wt ( GetWindowTextLengthA ( hWnd_ ), 0 );
         GetWindowTextA ( hWnd_, wt.data ( ), wt.length ( ) );
-        #endif
+#endif
         return wt;
     }
 
@@ -251,7 +266,6 @@ class LastWindow {
     }
 
     public:
-
     static HWND get ( ) noexcept {
         s_last_before_progman = nullptr;
         EnumWindows ( enum_window_callback, NULL );
@@ -415,6 +429,5 @@ int main655676 ( ) {
 
     return EXIT_SUCCESS;
 }
-
 
 // https://stackoverflow.com/questions/916259/win32-bring-a-window-to-top
