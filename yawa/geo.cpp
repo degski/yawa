@@ -43,7 +43,7 @@ std::string load_file ( std::string const & filename ) {
 }
 
 void save_places ( ) {
-    json j = g_geo;
+    json const j = g_geo;
     std::ofstream o ( g_places );
     o << j.dump ( 4 ) << std::endl;
     o.flush ( );
@@ -58,7 +58,7 @@ void load_places ( ) {
 }
 
 void save_keys ( ) {
-    json j = g_auth;
+    json const j = g_auth;
     std::ofstream o ( g_keys );
     o << j.dump ( 4 ) << std::endl;
     o.flush ( );
