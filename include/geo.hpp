@@ -37,6 +37,12 @@ struct location_t {
     }
 };
 
+inline void to_json ( json & j_, location_t const & l_ ) { j_ = json{ { "lat", l_.lat }, { "lng", l_.lng } }; }
+inline void from_json ( json const & j_, location_t & l_ ) {
+    j_.at ( "lat" ).get_to ( l_.lat );
+    j_.at ( "lng" ).get_to ( l_.lng );
+}
+
 struct place_t {
     location_t location;
     std::string elevation;
@@ -48,8 +54,20 @@ struct place_t {
     }
 };
 
+inline void to_json ( json & j_, place_t const & p_ ) {
+    j_ = json{ { "location", p_.location }, { "elevation", p_.elevation }, { "place", p_.place }, { "country", p_.country } };
+}
+inline void from_json ( json const & j_, place_t & p_ ) {
+    j_.at ( "location" ).get_to ( p_.location );
+    j_.at ( "elevation" ).get_to ( p_.elevation );
+    j_.at ( "place" ).get_to ( p_.place );
+    j_.at ( "country" ).get_to ( p_.country );
+}
+
 inline std::map<std::string, place_t> g_references;
 inline std::map<std::string, std::string> g_authenticate;
+
+inline json g_places2;
 
 void save_places ( );
 void load_places ( );

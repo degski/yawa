@@ -150,9 +150,9 @@ struct App {
 
         m_context_settings.antialiasingLevel = 8u;
 
-        m_render_window.create ( sf::VideoMode ( 1200u, 150u ), L"", sf::Style::None, m_context_settings );
+        m_render_window.create ( sf::VideoMode ( 1200u, 150u ), L"yawa", sf::Style::None, m_context_settings );
         m_render_window.setPosition ( { 360, 30 } );
-        m_render_window.setVerticalSyncEnabled ( true );
+        m_render_window.setFramerateLimit ( 6u );
         m_render_window.setActive ( false );
         m_render_window.setMouseCursorGrabbed ( false );
         m_render_window.setMouseCursorVisible ( true );
@@ -280,7 +280,7 @@ int main56868 ( ) {
     return EXIT_SUCCESS;
 }
 
-int main ( ) {
+int main67878 ( ) {
 
     /*
 
@@ -343,38 +343,16 @@ int main684 ( ) {
     return EXIT_SUCCESS;
 }
 
-int main7868767 ( ) {
+int main ( ) {
 
     init ( );
     curlpp::Cleanup myCleanup;
 
-    std::stringstream ss;
+    json pl;
 
-    try {
-        // Our request to be sent.
-        curlpp::Easy request;
+    pl[ "places" ] = json ( g_references );
 
-        // Set the URL.
-        request.setOpt<curlpp::options::WriteStream> ( &ss );
-        request.setOpt<curlpp::options::Encoding> ( "deflate" );
-
-        request.setOpt<curlpp::options::Url> (
-            "https://api.met.no/weatherapi/locationforecast/1.9/.json?lat=39.79&lon=19.81&msl=6" );
-
-        // Send request and get a result.
-        // By default the result goes to standard output.
-        request.perform ( );
-    }
-    catch ( curlpp::RuntimeError & e ) {
-        std::cout << e.what ( ) << std::endl;
-    }
-    catch ( curlpp::LogicError & e ) {
-        std::cout << e.what ( ) << std::endl;
-    }
-
-    std::string s = ss.str ( );
-
-    save_to_file_bin ( s, "y:/tmp/", "darksky" );
+    std::cout << pl.dump ( 4 ) << nl;
 
     return EXIT_SUCCESS;
 }
