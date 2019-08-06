@@ -29,3 +29,37 @@
 #include <string>
 
 #include "geo.hpp"
+
+std::string darksky_forcast_query_string ( location_t const & loc_ ) {
+    constexpr char url[] = "https://api.darksky.net/forecast/";
+    constexpr char tag[] = "?units=si&extend=hourly";
+    std::string s;
+    s = { url + g_auth[ "darksky" ] + "/" + loc_.lat + "," + loc_.lng + tag };
+    return s;
+}
+
+std::string apixu_forcast_query_string ( location_t const & loc_ ) {
+    constexpr char url[] = "https://api.apixu.com/v1/forecast.json?key=";
+    constexpr char tag[] = "&days=10";
+    std::string s;
+    s = { url + g_auth[ "apixu" ] + "&q=" + loc_.lat + "," + loc_.lng + tag };
+    return s;
+}
+
+json forcast_query_apixu ( std::string const & name_, std::string const & country_ ) {
+    json const forcast = query_url ( apixu_forcast_query_string ( place_data ( name_, country_ ).location ) );
+    std::ofstream o ( g_app_data_path / ( "apixu_" + name_ + "_" + country_ + ".json" ) );
+    o << forcast.dump ( g_indent ) << std::endl;
+    o.flush ( );
+    o.close ( );
+    return forcast;
+}
+
+json forcast_query_darksky ( std::string const & name_, std::string const & country_ ) {
+    json const forcast = query_url ( darksky_forcast_query_string ( place_data ( name_, country_ ).location ) );
+    std::ofstream o ( g_app_data_path / ( "darksky_" + name_ + "_" + country_ + ".json" ) );
+    o << forcast.dump ( g_indent ) << std::endl;
+    o.flush ( );
+    o.close ( );
+    return forcast;
+}

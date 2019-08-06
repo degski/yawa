@@ -105,24 +105,6 @@ using json = nlohmann::json;
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 
-json forcast_query_apixu ( std::string const & name_, std::string const & country_ ) {
-    json const forcast = query_url ( apixu_forcast_query_string ( place_data ( name_, country_ ).location ) );
-    std::ofstream o ( g_app_data_path / ( "apixu_" + name_ + "_" + country_ + ".json" ) );
-    o << forcast.dump ( g_indent ) << std::endl;
-    o.flush ( );
-    o.close ( );
-    return forcast;
-}
-
-json forcast_query_darksky ( std::string const & name_, std::string const & country_ ) {
-    json const forcast = query_url ( darksky_forcast_query_string ( place_data ( name_, country_ ).location ) );
-    std::ofstream o ( g_app_data_path / ( "darksky_" + name_ + "_" + country_ + ".json" ) );
-    o << forcast.dump ( g_indent ) << std::endl;
-    o.flush ( );
-    o.close ( );
-    return forcast;
-}
-
 struct App {
 
     // Draw stuff.

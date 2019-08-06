@@ -61,7 +61,7 @@ struct geo_t {
 
 inline void to_json ( json & j_, geo_t const & r_ ) {
     j_[ "current" ] = r_.current;
-    j_[ "places" ] = r_.places;
+    j_[ "places" ]  = r_.places;
 }
 inline void from_json ( json const & j_, geo_t & r_ ) {
     j_.at ( "current" ).get_to ( r_.current );
@@ -85,8 +85,5 @@ void load_auth ( );
 [[nodiscard]] std::string to_query_string ( std::string const & str_ );
 // Returns concatenated (with '+') string of name and country, with spaces replaced by '+'.
 [[nodiscard]] std::string to_query_string ( std::string const & place_, std::string const & country_ );
-
-[[nodiscard]] std::string darksky_forcast_query_string ( location_t const & loc_ );
-[[nodiscard]] std::string apixu_forcast_query_string ( location_t const & loc_ );
 
 [[nodiscard]] place_t const & place_data ( std::string const & place_, std::string const & country_ );

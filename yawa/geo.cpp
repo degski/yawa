@@ -102,22 +102,6 @@ std::string to_query_string ( std::string const & place_, std::string const & co
     return s;
 }
 
-[[nodiscard]] std::string darksky_forcast_query_string ( location_t const & loc_ ) {
-    constexpr char url[] = "https://api.darksky.net/forecast/";
-    constexpr char tag[] = "?units=si&extend=hourly";
-    std::string s;
-    s = { url + g_auth[ "darksky" ] + "/" + loc_.lat + "," + loc_.lng + tag };
-    return s;
-}
-
-[[nodiscard]] std::string apixu_forcast_query_string ( location_t const & loc_ ) {
-    constexpr char url[] = "https://api.apixu.com/v1/forecast.json?key=";
-    constexpr char tag[] = "&days=10";
-    std::string s;
-    s = { url + g_auth[ "apixu" ] + "&q=" + loc_.lat + "," + loc_.lng + tag };
-    return s;
-}
-
 place_t const & place_data ( std::string const & place_, std::string const & country_ ) {
     static place_t const not_found{ { "not_found", "not_found" }, "not_found", "not_found", "not_found" };
     std::string place_country = to_query_string ( place_, country_ );

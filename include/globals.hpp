@@ -68,7 +68,7 @@ using json = nlohmann::json;
 inline fs::path const g_app_data_path = appDataPath ( "yawa" );
 inline fs::path const g_app_path      = getExePath ( );
 
-inline fs::path const g_geo_path = g_app_data_path / "places.json";
+inline fs::path const g_geo_path  = g_app_data_path / "places.json";
 inline fs::path const g_auth_path = g_app_data_path / "keys.json";
 
 inline constexpr int g_indent = 4;
