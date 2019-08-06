@@ -125,14 +125,14 @@ json query_url ( std::string const & url_ ) {
 }
 
 void save_to_file ( json const & j_, std::string const & name_ ) {
-    std::ofstream o ( g_app_data_path / ( name_ + std::string{ ".json" } ) );
-    o << std::setw ( 4 ) << j_ << std::endl;
+    std::ofstream o ( g_app_data_path / ( name_ + ".json" ) );
+    o << std::setw ( g_indent ) << j_ << std::endl;
     o.flush ( );
     o.close ( );
 }
 
 void load_from_file ( json & j_, std::string const & name_ ) {
-    std::ifstream i ( g_app_data_path / ( name_ + std::string{ ".json" } ) );
+    std::ifstream i ( g_app_data_path / ( name_ + ".json" ) );
     i >> j_;
     i.close ( );
 }

@@ -30,11 +30,6 @@
 
 struct location_t {
     std::string lat, lng;
-
-    template<class Archive>
-    void serialize ( Archive & ar_ ) {
-        ar_ ( CEREAL_NVP ( lat ), CEREAL_NVP ( lng ) );
-    }
 };
 
 inline void to_json ( json & j_, location_t const & l_ ) { j_ = json{ { "lat", l_.lat }, { "lng", l_.lng } }; }
@@ -47,11 +42,6 @@ struct place_t {
     location_t location;
     std::string elevation;
     std::string place, country;
-
-    template<class Archive>
-    void serialize ( Archive & ar_ ) {
-        ar_ ( CEREAL_NVP ( location ), CEREAL_NVP ( elevation ), CEREAL_NVP ( place ), CEREAL_NVP ( country ) );
-    }
 };
 
 inline void to_json ( json & j_, place_t const & p_ ) {
@@ -83,11 +73,11 @@ using auth_t = std::map<std::string, std::string>;
 inline geo_t g_geo;
 inline auth_t g_auth;
 
-void save_places ( );
-void load_places ( );
+void save_geo ( );
+void load_geo ( );
 
-void save_keys ( );
-void load_keys ( );
+void save_auth ( );
+void load_auth ( );
 
 [[nodiscard]] std::string load_file ( std::string const & filename );
 

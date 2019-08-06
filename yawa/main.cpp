@@ -84,10 +84,10 @@ std::vector<char> loadFile ( String const & filename ) {
 // https://api.met.no/weatherapi/locationforecast/1.9/.json?lat=39.79&lon=19.81&msl=6
 
 void init ( ) {
-    if ( fs::exists ( g_places ) )
-        load_places ( );
-    if ( fs::exists ( g_keys ) )
-        load_keys ( );
+    if ( fs::exists ( g_geo_path ) )
+        load_geo ( );
+    if ( fs::exists ( g_auth_path ) )
+        load_auth ( );
 }
 
 #include <nlohmann/json.hpp>
@@ -107,13 +107,19 @@ using json = nlohmann::json;
 
 json forcast_query_apixu ( std::string const & name_, std::string const & country_ ) {
     json const forcast = query_url ( apixu_forcast_query_string ( place_data ( name_, country_ ).location ) );
-    save_to_file ( forcast, "apixu_" + name_ + "_" + country_ );
+    std::ofstream o ( g_app_data_path / ( "apixu_" + name_ + "_" + country_ + ".json" ) );
+    o << forcast.dump ( g_indent ) << std::endl;
+    o.flush ( );
+    o.close ( );
     return forcast;
 }
 
 json forcast_query_darksky ( std::string const & name_, std::string const & country_ ) {
     json const forcast = query_url ( darksky_forcast_query_string ( place_data ( name_, country_ ).location ) );
-    save_to_file ( forcast, "darksky_" + name_ + "_" + country_ );
+    std::ofstream o ( g_app_data_path / ( "darksky_" + name_ + "_" + country_ + ".json" ) );
+    o << forcast.dump ( g_indent ) << std::endl;
+    o.flush ( );
+    o.close ( );
     return forcast;
 }
 
@@ -232,7 +238,7 @@ struct App {
 
     void render_objects ( ) noexcept {
         m_render_window.clear ( sf::Color::Transparent );
-        auto & s = m_icon_textures[ "wi-day-sunny" ].sprite;
+        auto & s = m_icon_textures[ "day-sunny" ].sprite;
         m_render_window.draw ( s );
         m_render_window.display ( );
     }
@@ -280,7 +286,7 @@ int main56868 ( ) {
     return EXIT_SUCCESS;
 }
 
-int main67878 ( ) {
+int main ( ) {
 
     /*
 
@@ -288,18 +294,18 @@ int main67878 ( ) {
     curlpp::Cleanup myCleanup;
 
     json forcast_apixu{ forcast_query_apixu ( "acharavi", "greece" ) };
-    std::cout << forcast_apixu.dump ( 4 ) << nl;
+    std::cout << forcast_apixu.dump ( g_indent ) << nl;
 
     json forcast_darksky{ forcast_query_darksky ( "acharavi", "greece" ) };
-    std::cout << forcast_darksky.dump ( 4 ) << nl;
+    std::cout << forcast_darksky.dump ( g_indent ) << nl;
 
     json forcast_apixu{ load_from_file ( "apixu_acharavi_greece" ) };
-    std::cout << forcast_apixu.dump ( 4 ) << nl;
+    std::cout << forcast_apixu.dump ( g_indent ) << nl;
 
 
 
     json forcast_darksky{ load_from_file ( "darksky_acharavi_greece" ) };
-    std::cout << forcast_darksky.dump ( 4 ) << nl;
+    std::cout << forcast_darksky.dump ( g_indent ) << nl;
 
     std::cout << sf::systemTime ( ) << nl;
     */
@@ -322,11 +328,9 @@ int main684 ( ) {
 
     std::string s;
 
-    load_from_file_bin ( s, "y:/tmp/", "darksky" );
-
     json const fc = json::parse ( s );
 
-    std::cout << fc.dump ( 4 ) << nl;
+    std::cout << fc.dump ( g_indent ) << nl;
 
     /*
 
@@ -343,12 +347,12 @@ int main684 ( ) {
     return EXIT_SUCCESS;
 }
 
-int main ( ) {
+int main65756 ( ) {
 
     init ( );
     curlpp::Cleanup myCleanup;
 
-    save_keys ( );
+    save_auth ( );
 
     return EXIT_SUCCESS;
 }

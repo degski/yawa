@@ -42,31 +42,31 @@ std::string load_file ( std::string const & filename ) {
     return str;
 }
 
-void save_places ( ) {
+void save_geo ( ) {
     json const j = g_geo;
-    std::ofstream o ( g_places );
-    o << j.dump ( 4 ) << std::endl;
+    std::ofstream o ( g_geo_path );
+    o << j.dump ( g_indent ) << std::endl;
     o.flush ( );
     o.close ( );
 }
-void load_places ( ) {
+void load_geo ( ) {
     json j;
-    std::ifstream i ( g_places );
+    std::ifstream i ( g_geo_path );
     i >> j;
     i.close ( );
     g_geo = j.get<geo_t> ( );
 }
 
-void save_keys ( ) {
+void save_auth ( ) {
     json const j = g_auth;
-    std::ofstream o ( g_keys );
-    o << j.dump ( 4 ) << std::endl;
+    std::ofstream o ( g_auth_path );
+    o << j.dump ( g_indent ) << std::endl;
     o.flush ( );
     o.close ( );
 }
-void load_keys ( ) {
+void load_auth ( ) {
     json j;
-    std::ifstream i ( g_keys );
+    std::ifstream i ( g_auth_path );
     i >> j;
     i.close ( );
     g_auth = j.get<auth_t> ( );
@@ -134,7 +134,7 @@ place_t const & place_data ( std::string const & place_, std::string const & cou
                 to_string ( query_url ( elevation_query_string ( data.location ) )[ 0 ][ "statistics" ][ "elevation" ][ "value" ]
                                 .get<int> ( ) );
             place_t const & rv = g_geo.places.emplace ( std::move ( place_country ), std::move ( data ) ).first->second;
-            save_places ( );
+            save_geo ( );
             return rv;
         }
         else

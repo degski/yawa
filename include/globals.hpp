@@ -31,7 +31,7 @@
 #include <string>
 
 namespace fs = std::filesystem;
-
+/*
 #include <cereal/cereal.hpp>
 
 #include <cereal/archives/binary.hpp>
@@ -40,7 +40,7 @@ namespace fs = std::filesystem;
 
 #include <cereal/types/map.hpp>
 #include <cereal/types/string.hpp>
-
+*/
 #include <nlohmann/json.hpp>
 
 #if _WIN32
@@ -68,8 +68,10 @@ using json = nlohmann::json;
 inline fs::path const g_app_data_path = appDataPath ( "yawa" );
 inline fs::path const g_app_path      = getExePath ( );
 
-inline fs::path const g_places = g_app_data_path / "places.json";
-inline fs::path const g_keys = g_app_data_path / "keys.json";
+inline fs::path const g_geo_path = g_app_data_path / "places.json";
+inline fs::path const g_auth_path = g_app_data_path / "keys.json";
+
+inline constexpr int g_indent = 4;
 
 inline bool is_read ( char const file_[] ) noexcept {
     return ( fs::status ( file_ ).permissions ( ) & fs::perms::owner_read ) != fs::perms::none;
@@ -92,7 +94,7 @@ template<typename T>
 [[nodiscard]] T mps_to_kmph ( T const mps_ ) noexcept {
     return mps_ * ( T{ 3'600 } / T{ 1'000 } );
 }
-
+/*
 template<typename T>
 void save_to_file_bin ( T const & t_, fs::path && path_, std::string && file_name_, bool const append_ = false ) noexcept {
     std::ofstream ostream ( path_ / ( file_name_ + std::string ( ".cereal" ) ),
@@ -207,7 +209,7 @@ void load_from_file_json ( char const object_name_[], T & t_, char const file_[]
     }
     istream.close ( );
 }
-
+*/
 json query_url ( std::string const & url_ );
 
 [[nodiscard]] std::string get_timestamp_iso8601 ( ) noexcept;
