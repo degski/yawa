@@ -53,14 +53,7 @@ namespace fs = std::filesystem;
 #include <string>
 #include <vector>
 
-#include <cereal/cereal.hpp>
-
-#include <cereal/archives/binary.hpp>
-#include <cereal/archives/json.hpp>
-#include <cereal/archives/xml.hpp>
-#include <cereal/types/map.hpp>
-#include <cereal/types/string.hpp>
-
+#include "app.hpp"
 #include "geo.hpp"
 #include "globals.hpp"
 #include "resource.h"
@@ -83,13 +76,6 @@ std::vector<char> loadFile ( String const & filename ) {
 
 // https://api.met.no/weatherapi/locationforecast/1.9/.json?lat=39.79&lon=19.81&msl=6
 
-void init ( ) {
-    if ( fs::exists ( g_geo_path ) )
-        load_geo ( );
-    if ( fs::exists ( g_auth_path ) )
-        load_auth ( );
-}
-
 #include <nlohmann/json.hpp>
 
 // for convenience.
@@ -99,132 +85,6 @@ using json = nlohmann::json;
 
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
-
-#include <SFML/Extensions.hpp>
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-
-struct App {
-
-    // Draw stuff.
-
-    sf::ContextSettings m_context_settings;
-    sf::RenderWindow m_render_window;
-    sf::FloatRect m_render_window_bounds;
-
-    // Frames.
-
-    sf::Int32 m_frame_rate;
-    float m_frame_duration_as_microseconds;
-
-    // Resources.
-
-    sf::Font m_font_bold, m_font_regular, m_font_mono;
-
-    struct Icon {
-        sf::Texture texture;
-        sf::Sprite sprite;
-        static inline sf::Vector2i icon_size;
-    };
-
-    std::map<std::string, Icon> m_icon_textures;
-
-    sf::Event m_event;
-
-    sf::Color const m_color = sf::Color ( 108, 112, 95, 255 );
-
-    App ( ) {
-
-        m_context_settings.antialiasingLevel = 8u;
-
-        m_render_window.create ( sf::VideoMode ( 1200u, 150u ), L"yawa", sf::Style::None, m_context_settings );
-        m_render_window.setPosition ( { 360, 30 } );
-        m_render_window.setFramerateLimit ( 6u );
-        m_render_window.setActive ( false );
-        m_render_window.setMouseCursorGrabbed ( false );
-        m_render_window.setMouseCursorVisible ( true );
-
-        sf::makeWindowSeeThrough ( m_render_window );
-        sf::moveWindowBottom ( m_render_window );
-
-        m_render_window_bounds = sf::FloatRect ( 0.0f, 0.0f, m_render_window.getSize ( ).x, m_render_window.getSize ( ).y );
-
-        // Frames.
-
-        m_frame_rate                     = sf::getScreenRefreshRate ( );
-        m_frame_duration_as_microseconds = 1'000'000.0f / m_frame_rate;
-
-        // Load fonts.
-
-        sf::loadFromResource ( m_font_bold, __FONT_BOLD__ );
-        sf::loadFromResource ( m_font_regular, __FONT_REGULAR__ );
-        sf::loadFromResource ( m_font_mono, __FONT_MONO__ );
-
-        // Load icons.
-
-        construct_icons_map ( );
-
-        m_render_window.clear ( sf::Color::Transparent );
-        m_render_window.display ( );
-    }
-
-    void construct_icons_map ( ) {
-        sf::Image icons;
-        sf::loadFromResource ( icons, __ICONS__ );
-        Icon::icon_size.x = static_cast<sf::Int32> ( icons.getSize ( ).x );
-        Icon::icon_size.y = static_cast<sf::Int32> ( icons.getSize ( ).y );
-        // Change to white.
-        for ( int y = 0; y < Icon::icon_size.y; ++y ) {
-            for ( int x = 0; x < Icon::icon_size.x; ++x ) {
-                auto alpha = icons.getPixel ( x, y ).a;
-                if ( alpha )
-                    icons.setPixel ( x, y, sf::Color ( m_color.r, m_color.g, m_color.b, alpha ) );
-            }
-        }
-        Icon::icon_size.x /= descriptions_size ( );
-        sf::IntRect rect{
-            0,
-            0,
-            Icon::icon_size.x,
-            Icon::icon_size.y,
-        };
-        for ( int i = 0; i < descriptions_size ( ); ++i, rect.left += rect.width ) {
-            Icon & icon =
-                ( *m_icon_textures.emplace_hint ( std::end ( m_icon_textures ), std::string{ g_descriptions[ i ] }, Icon{} ) )
-                    .second;
-            icon.texture.loadFromImage ( icons, rect );
-            icon.texture.setSmooth ( true );
-            icon.sprite.setTexture ( icon.texture );
-        }
-    }
-
-    bool is_active ( ) const noexcept { return m_render_window.isOpen ( ); }
-
-    void run ( ) noexcept {
-        poll_events ( );
-        // update_state ( );
-        render_objects ( );
-    }
-
-    void poll_events ( ) noexcept {
-        if ( m_render_window.pollEvent ( m_event ) ) {
-            if ( sf::Event::Closed == m_event.type or
-                 ( sf::Event::KeyPressed == m_event.type and sf::Keyboard::Escape == m_event.key.code ) ) {
-                m_render_window.close ( );
-            }
-        }
-    }
-
-    void update_state ( ) noexcept {}
-
-    void render_objects ( ) noexcept {
-        m_render_window.clear ( sf::Color::Transparent );
-        auto & s = m_icon_textures[ "day-sunny" ].sprite;
-        m_render_window.draw ( s );
-        m_render_window.display ( );
-    }
-};
 
 // IsWindowVisible(hWnd)
 
@@ -305,7 +165,7 @@ int main684 ( ) {
     using namespace date;
     using namespace std::chrono;
 
-    init ( );
+    App::init ( );
     curlpp::Cleanup myCleanup;
 
     std::string s;
@@ -331,7 +191,7 @@ int main684 ( ) {
 
 int main65756 ( ) {
 
-    init ( );
+    App::init ( );
     curlpp::Cleanup myCleanup;
 
     save_auth ( );

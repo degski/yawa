@@ -229,6 +229,7 @@
     <ClCompile Include="weather.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\app.hpp" />
     <ClInclude Include="..\include\geo.hpp" />
     <ClInclude Include="..\include\globals.hpp" />
     <ClInclude Include="..\include\weather.hpp" />
