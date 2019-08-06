@@ -69,42 +69,7 @@ struct App {
 
     sf::Color const m_color = sf::Color ( 108, 112, 95, 255 );
 
-    App ( ) {
-
-        init ( );
-
-        m_context_settings.antialiasingLevel = 8u;
-
-        m_render_window.create ( sf::VideoMode ( 1200u, 150u ), L"yawa", sf::Style::None, m_context_settings );
-        m_render_window.setPosition ( { 360, 30 } );
-        m_render_window.setFramerateLimit ( 6u );
-        m_render_window.setActive ( false );
-        m_render_window.setMouseCursorGrabbed ( false );
-        m_render_window.setMouseCursorVisible ( true );
-
-        sf::makeWindowSeeThrough ( m_render_window );
-        sf::moveWindowBottom ( m_render_window );
-
-        m_render_window_bounds = sf::FloatRect ( 0.0f, 0.0f, m_render_window.getSize ( ).x, m_render_window.getSize ( ).y );
-
-        // Frames.
-
-        m_frame_rate                     = sf::getScreenRefreshRate ( );
-        m_frame_duration_as_microseconds = 1'000'000.0f / m_frame_rate;
-
-        // Load fonts.
-
-        sf::loadFromResource ( m_font_bold, __FONT_BOLD__ );
-        sf::loadFromResource ( m_font_regular, __FONT_REGULAR__ );
-        sf::loadFromResource ( m_font_mono, __FONT_MONO__ );
-
-        // Load icons.
-
-        construct_icons_map ( );
-
-        m_render_window.clear ( sf::Color::Transparent );
-        m_render_window.display ( );
-    }
+    App ( );
 
     static inline void init ( ) {
         if ( fs::exists ( g_geo_path ) )
@@ -113,35 +78,7 @@ struct App {
             load_auth ( );
     }
 
-    inline void construct_icons_map ( ) {
-        sf::Image icons;
-        sf::loadFromResource ( icons, __ICONS__ );
-        Icon::icon_size.x = static_cast<sf::Int32> ( icons.getSize ( ).x );
-        Icon::icon_size.y = static_cast<sf::Int32> ( icons.getSize ( ).y );
-        // Change to white.
-        for ( int y = 0; y < Icon::icon_size.y; ++y ) {
-            for ( int x = 0; x < Icon::icon_size.x; ++x ) {
-                auto alpha = icons.getPixel ( x, y ).a;
-                if ( alpha )
-                    icons.setPixel ( x, y, sf::Color ( m_color.r, m_color.g, m_color.b, alpha ) );
-            }
-        }
-        Icon::icon_size.x /= descriptions_size ( );
-        sf::IntRect rect{
-            0,
-            0,
-            Icon::icon_size.x,
-            Icon::icon_size.y,
-        };
-        for ( int i = 0; i < descriptions_size ( ); ++i, rect.left += rect.width ) {
-            Icon & icon =
-                ( *m_icon_textures.emplace_hint ( std::end ( m_icon_textures ), std::string{ g_descriptions[ i ] }, Icon{} ) )
-                    .second;
-            icon.texture.loadFromImage ( icons, rect );
-            icon.texture.setSmooth ( true );
-            icon.sprite.setTexture ( icon.texture );
-        }
-    }
+    void construct_icons_map ( );
 
     inline bool is_active ( ) const noexcept { return m_render_window.isOpen ( ); }
 

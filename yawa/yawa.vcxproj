@@ -223,6 +223,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="app.cpp" />
     <ClCompile Include="geo.cpp" />
     <ClCompile Include="globals.cpp" />
     <ClCompile Include="main.cpp" />
