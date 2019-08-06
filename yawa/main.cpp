@@ -72,9 +72,6 @@ using json = nlohmann::json;
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
 
-/// Makes easier to expand the expressions
-#define EXPAND( ... ) __VA_ARGS__
-
 #define Q( x ) #x
 #define QUOTE( x ) Q ( x )
 
@@ -85,22 +82,28 @@ struct DisplayDataCurrent {
     bool is_day;
 };
 
-#define CONCAT( A1, A2, A3, A4 ) ( A1##A2##A3##A4 )
+#define GET_DISPLAY_DATA_CURRENT_DARKSKY( PARAM ) j_.at ( QUOTE ( currently ) ).at ( QUOTE ( PARAM ) ).get_to ( d_.PARAM )
 
-#define CONCAT2( A1, A2 ) ( A1##A2 )
-#define CONCAT3( A1, A2, A3 ) ( A1##A2##A3 )
-
-#define GET_DARKSY_CURRENTLY( PARAM ) j_.at ( QUOTE ( currently ) ).at ( QUOTE ( PARAM ) ).get_to ( d.PARAM )
-
-//  CONCAT2 ( ., get_to ( CONCAT2 ( d., PARAM ) ) )
-
-// .get_to ( d.##PARAM##)
-
-// .get_to ( d.PARAM )
-
-//  EXPAND ( j_.at ( \\"currently\\" ).at ( \\", PARAM, \\" ) ).get_to ( d., PARAM, ) )
-
-inline void from_json ( json const & j_, DisplayDataCurrent & d ) { GET_DARKSY_CURRENTLY ( apparentTemperature ); }
+inline void from_json ( json const & j_, DisplayDataCurrent & d_ ) {
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( apparentTemperature );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( cloudCover );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( dewPoint );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( humidity );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( icon );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( nearestStormDistance );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( ozone );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( precipIntensity );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( precipProbability );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( pressure );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( summary );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( temperature );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( time );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( uvIndex );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( visibility );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( windBearing );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( windGust );
+    GET_DISPLAY_DATA_CURRENT_DARKSKY ( windSpeed );
+}
 
 int main ( ) { std::cout << QUOTE ( apparentTemperature ) << nl; }
 
