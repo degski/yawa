@@ -72,8 +72,63 @@ using json = nlohmann::json;
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
 
-int main ( ) {
+/// Makes easier to expand the expressions
+#define EXPAND( ... ) __VA_ARGS__
 
+#define Q( x ) #x
+#define QUOTE( x ) Q ( x )
+
+struct DisplayDataCurrent {
+    // darksky.
+    std::string apparentTemperature, cloudCover, dewPoint, humidity, icon, nearestStormDistance, ozone, precipIntensity,
+        precipProbability, pressure, summary, temperature, time, uvIndex, visibility, windBearing, windGust, windSpeed;
+    bool is_day;
+};
+
+#define CONCAT( A1, A2, A3, A4 ) ( A1##A2##A3##A4 )
+
+#define CONCAT2( A1, A2 ) ( A1##A2 )
+#define CONCAT3( A1, A2, A3 ) ( A1##A2##A3 )
+
+#define GET_DARKSY_CURRENTLY( PARAM ) j_.at ( QUOTE ( currently ) ).at ( QUOTE ( PARAM ) ).get_to ( d.PARAM )
+
+//  CONCAT2 ( ., get_to ( CONCAT2 ( d., PARAM ) ) )
+
+// .get_to ( d.##PARAM##)
+
+// .get_to ( d.PARAM )
+
+//  EXPAND ( j_.at ( \\"currently\\" ).at ( \\", PARAM, \\" ) ).get_to ( d., PARAM, ) )
+
+inline void from_json ( json const & j_, DisplayDataCurrent & d ) { GET_DARKSY_CURRENTLY ( apparentTemperature ); }
+
+int main ( ) { std::cout << QUOTE ( apparentTemperature ) << nl; }
+
+struct DisplayDataHourly {
+    // darksky.
+    std::string apparentTemperature, cloudCover, dewPoint, humidity, icon, ozone, precipIntensity, precipProbability, pressure,
+        summary, temperature, time, uvIndex, visibility, windBearing, windGust, windSpeed;
+};
+
+struct DisplayDataDaily {
+    // darksky.
+    std::string apparentTemperatureHigh, apparentTemperatureHighTime, apparentTemperatureLow, apparentTemperatureLowTime,
+        apparentTemperatureMax, apparentTemperatureMaxTime, apparentTemperatureMin, apparentTemperatureMinTime, cloudCover,
+        dewPoint, humidity, icon, moonPhase, ozone, precipIntensity, precipIntensityMax, precipIntensityMaxTime, precipProbability,
+        precipType, pressure, summary, sunriseTime, sunsetTime, temperatureHigh, temperatureHighTime, temperatureLow,
+        temperatureLowTime, temperatureMax, temperatureMaxTime, temperatureMin, temperatureMinTime, time, uvIndex, uvIndexTime,
+        visibility, windBearing, windGust, windGustTime, windSpeed;
+    std::array<DisplayDataHourly, 24> hourly_data;
+    // apixu.
+    std::string sunrise, sunset, moonrise, moonset;
+};
+
+struct DisplayData {
+    DisplayDataCurrent current_data;
+    std::array<DisplayDataDaily, 7> daily_data;
+};
+
+int main56867 ( ) {
     /*
 
     init ( );
@@ -153,7 +208,6 @@ int main5 ( ) {
 }
 
 int main655676 ( ) {
-
     auto & db = date::get_tzdb_list ( );
 
     return EXIT_SUCCESS;
@@ -164,7 +218,6 @@ int main655676 ( ) {
 // IsWindowVisible(hWnd)
 
 class LastWindow {
-
     static inline HWND s_last_before_progman;
 
     static auto window_title ( HWND hWnd_ ) noexcept {
@@ -197,49 +250,6 @@ class LastWindow {
 };
 
 int main56868 ( ) {
-
-    std::cout << LastWindow::get ( ) << std::endl;
-
-    return EXIT_SUCCESS;
-}
-
-// IsWindowVisible(hWnd)
-
-class LastWindow {
-
-    static inline HWND s_last_before_progman;
-
-    static auto window_title ( HWND hWnd_ ) noexcept {
-#if GetWindowTextLength == GetWindowTextLengthW
-        std::wstring wt ( GetWindowTextLengthW ( hWnd_ ), 0 );
-        GetWindowTextW ( hWnd_, wt.data ( ), wt.length ( ) );
-#else
-        std::string wt ( GetWindowTextLengthA ( hWnd_ ), 0 );
-        GetWindowTextA ( hWnd_, wt.data ( ), wt.length ( ) );
-#endif
-        return wt;
-    }
-
-    static BOOL CALLBACK enum_window_callback ( HWND hWnd_, LPARAM lparam_ ) noexcept {
-        if ( TEXT ( "Program Manager" ) != window_title ( hWnd_ ) ) {
-            s_last_before_progman = hWnd_;
-            return TRUE;
-        }
-        else {
-            return FALSE;
-        }
-    }
-
-    public:
-    static HWND get ( ) noexcept {
-        s_last_before_progman = nullptr;
-        EnumWindows ( enum_window_callback, NULL );
-        return s_last_before_progman;
-    }
-};
-
-int main56868 ( ) {
-
     std::cout << LastWindow::get ( ) << std::endl;
 
     return EXIT_SUCCESS;
