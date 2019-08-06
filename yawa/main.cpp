@@ -62,20 +62,6 @@ namespace fs = std::filesystem;
 #include <date/date.h>
 #include <date/tz.h>
 
-template<typename String>
-std::vector<char> loadFile ( String const & filename ) {
-    std::vector<char> file;
-    if ( std::ifstream is{ filename, std::ios::binary | std::ios::ate } ) {
-        file.resize ( static_cast<size_t> ( is.tellg ( ) ) );
-        is.seekg ( 0 );
-        is.read ( file.data ( ), file.size ( ) );
-        file.push_back ( 0 );
-    }
-    return file;
-}
-
-// https://api.met.no/weatherapi/locationforecast/1.9/.json?lat=39.79&lon=19.81&msl=6
-
 #include <nlohmann/json.hpp>
 
 // for convenience.
@@ -85,48 +71,6 @@ using json = nlohmann::json;
 
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
-
-// IsWindowVisible(hWnd)
-
-class LastWindow {
-
-    static inline HWND s_last_before_progman;
-
-    static auto window_title ( HWND hWnd_ ) noexcept {
-#if GetWindowTextLength == GetWindowTextLengthW
-        std::wstring wt ( GetWindowTextLengthW ( hWnd_ ), 0 );
-        GetWindowTextW ( hWnd_, wt.data ( ), wt.length ( ) );
-#else
-        std::string wt ( GetWindowTextLengthA ( hWnd_ ), 0 );
-        GetWindowTextA ( hWnd_, wt.data ( ), wt.length ( ) );
-#endif
-        return wt;
-    }
-
-    static BOOL CALLBACK enum_window_callback ( HWND hWnd_, LPARAM lparam_ ) noexcept {
-        if ( TEXT ( "Program Manager" ) != window_title ( hWnd_ ) ) {
-            s_last_before_progman = hWnd_;
-            return TRUE;
-        }
-        else {
-            return FALSE;
-        }
-    }
-
-    public:
-    static HWND get ( ) noexcept {
-        s_last_before_progman = nullptr;
-        EnumWindows ( enum_window_callback, NULL );
-        return s_last_before_progman;
-    }
-};
-
-int main56868 ( ) {
-
-    std::cout << LastWindow::get ( ) << std::endl;
-
-    return EXIT_SUCCESS;
-}
 
 int main ( ) {
 
@@ -160,44 +104,9 @@ int main ( ) {
     return EXIT_SUCCESS;
 }
 
-int main684 ( ) {
+int main684 ( ) { return EXIT_SUCCESS; }
 
-    using namespace date;
-    using namespace std::chrono;
-
-    App::init ( );
-    curlpp::Cleanup myCleanup;
-
-    std::string s;
-
-    json const fc = json::parse ( s );
-
-    std::cout << fc.dump ( g_indent ) << nl;
-
-    /*
-
-    for ( auto const & f : fc[ "product" ][ "time" ] ) {
-        if ( f[ "from" ] == f[ "to" ] ) {
-            std::cout << f.dump ( ) << nl;
-            // std::cout << f[ "from" ].get<std::string> ( ) << ' ' << f["location"]["temperature"]["value"].get<std::string> ( ) <<
-    nl;
-        }
-    }
-
-    */
-
-    return EXIT_SUCCESS;
-}
-
-int main65756 ( ) {
-
-    App::init ( );
-    curlpp::Cleanup myCleanup;
-
-    save_auth ( );
-
-    return EXIT_SUCCESS;
-}
+int main65756 ( ) { return EXIT_SUCCESS; }
 
 /*
 {
@@ -251,3 +160,87 @@ int main655676 ( ) {
 }
 
 // https://stackoverflow.com/questions/916259/win32-bring-a-window-to-top
+
+// IsWindowVisible(hWnd)
+
+class LastWindow {
+
+    static inline HWND s_last_before_progman;
+
+    static auto window_title ( HWND hWnd_ ) noexcept {
+#if GetWindowTextLength == GetWindowTextLengthW
+        std::wstring wt ( GetWindowTextLengthW ( hWnd_ ), 0 );
+        GetWindowTextW ( hWnd_, wt.data ( ), wt.length ( ) );
+#else
+        std::string wt ( GetWindowTextLengthA ( hWnd_ ), 0 );
+        GetWindowTextA ( hWnd_, wt.data ( ), wt.length ( ) );
+#endif
+        return wt;
+    }
+
+    static BOOL CALLBACK enum_window_callback ( HWND hWnd_, LPARAM lparam_ ) noexcept {
+        if ( TEXT ( "Program Manager" ) != window_title ( hWnd_ ) ) {
+            s_last_before_progman = hWnd_;
+            return TRUE;
+        }
+        else {
+            return FALSE;
+        }
+    }
+
+    public:
+    static HWND get ( ) noexcept {
+        s_last_before_progman = nullptr;
+        EnumWindows ( enum_window_callback, NULL );
+        return s_last_before_progman;
+    }
+};
+
+int main56868 ( ) {
+
+    std::cout << LastWindow::get ( ) << std::endl;
+
+    return EXIT_SUCCESS;
+}
+
+// IsWindowVisible(hWnd)
+
+class LastWindow {
+
+    static inline HWND s_last_before_progman;
+
+    static auto window_title ( HWND hWnd_ ) noexcept {
+#if GetWindowTextLength == GetWindowTextLengthW
+        std::wstring wt ( GetWindowTextLengthW ( hWnd_ ), 0 );
+        GetWindowTextW ( hWnd_, wt.data ( ), wt.length ( ) );
+#else
+        std::string wt ( GetWindowTextLengthA ( hWnd_ ), 0 );
+        GetWindowTextA ( hWnd_, wt.data ( ), wt.length ( ) );
+#endif
+        return wt;
+    }
+
+    static BOOL CALLBACK enum_window_callback ( HWND hWnd_, LPARAM lparam_ ) noexcept {
+        if ( TEXT ( "Program Manager" ) != window_title ( hWnd_ ) ) {
+            s_last_before_progman = hWnd_;
+            return TRUE;
+        }
+        else {
+            return FALSE;
+        }
+    }
+
+    public:
+    static HWND get ( ) noexcept {
+        s_last_before_progman = nullptr;
+        EnumWindows ( enum_window_callback, NULL );
+        return s_last_before_progman;
+    }
+};
+
+int main56868 ( ) {
+
+    std::cout << LastWindow::get ( ) << std::endl;
+
+    return EXIT_SUCCESS;
+}

@@ -83,3 +83,5 @@ inline constexpr int descriptions_size ( ) noexcept {
 
 [[nodiscard]] json forcast_query_apixu ( std::string const & name_, std::string const & country_ );
 [[nodiscard]] json forcast_query_darksky ( std::string const & name_, std::string const & country_ );
+
+// https://api.met.no/weatherapi/locationforecast/1.9/.json?lat=39.79&lon=19.81&msl=6
