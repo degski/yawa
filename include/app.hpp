@@ -25,10 +25,7 @@
 
 #include <map>
 
-#include <SFML/Extensions.hpp>
 #include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
 
 #include <curlpp/cURLpp.hpp>
 
