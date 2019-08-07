@@ -260,15 +260,15 @@ inline void from_json ( json const & j_, DisplayDataHourly & d_ ) {
 }
 
 struct DisplayData {
-    DisplayDataCurrent currentData;
-    DisplayDataDaily dailyData;
-    DisplayDataHourly hourlyData;
+    DisplayDataCurrent current;
+    DisplayDataDaily daily;
+    DisplayDataHourly hourly;
 };
 
 inline void from_json ( json const & j_, DisplayData & d_ ) {
-    d_.currentData = j_;
-    d_.dailyData   = j_;
-    d_.hourlyData  = j_;
+    d_.current = j_;
+    d_.daily   = j_;
+    d_.hourly  = j_;
 }
 
 int main ( ) {
