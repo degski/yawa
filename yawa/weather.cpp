@@ -63,3 +63,19 @@ json forcast_query_darksky ( std::string const & name_, std::string const & coun
     o.close ( );
     return forcast;
 }
+
+json forcast_apixu ( std::string const & name_, std::string const & country_ ) {
+    json forcast;
+    std::ifstream i ( g_app_data_path / ( "apixu_" + name_ + "_" + country_ + ".json" ) );
+    i >> forcast;
+    i.close ( );
+    return forcast;
+}
+
+json forcast_darksky ( std::string const & name_, std::string const & country_ ) {
+    json forcast;
+    std::ifstream i ( g_app_data_path / ( "darksky_" + name_ + "_" + country_ + ".json" ) );
+    i >> forcast;
+    i.close ( );
+    return forcast;
+}

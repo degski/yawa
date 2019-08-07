@@ -72,92 +72,224 @@ using json = nlohmann::json;
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
 
-#define Q( x ) #x
-#define QUOTE( x ) Q ( x )
+#define Q_( x ) #x
+#define QUOTE( x ) Q_ ( x )
+#define GET_DATA( PARAM ) f.at ( QUOTE ( PARAM ) ).get_to ( t.PARAM )
 
 struct DisplayDataCurrent {
     // darksky.
-    std::string apparentTemperature, cloudCover, dewPoint, humidity, icon, nearestStormDistance, ozone, precipIntensity,
-        precipProbability, pressure, summary, temperature, time, uvIndex, visibility, windBearing, windGust, windSpeed;
-    bool is_day;
+    // apparentTemperature, cloudCover, dewPoint, humidity, icon, nearestStormDistance, ozone, precipIntensity,
+    // precipProbability, pressure, summary, temperature, time, uvIndex, visibility, windBearing, windGust, windSpeed;
+    float apparentTemperature, cloudCover, dewPoint, humidity;
+    std::string icon;
+    float nearestStormDistance, ozone, precipIntensity, precipProbability, pressure;
+    std::string summary;
+    float temperature;
+    std::time_t time;
+    int uvIndex;
+    float visibility;
+    int windBearing;
+    float windGust, windSpeed;
+    bool isDay;
 };
-
-#define GET_DISPLAY_DATA_CURRENT_DARKSKY( PARAM ) j_.at ( QUOTE ( currently ) ).at ( QUOTE ( PARAM ) ).get_to ( d_.PARAM )
 
 inline void from_json ( json const & j_, DisplayDataCurrent & d_ ) {
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( apparentTemperature );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( cloudCover );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( dewPoint );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( humidity );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( icon );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( nearestStormDistance );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( ozone );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( precipIntensity );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( precipProbability );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( pressure );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( summary );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( temperature );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( time );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( uvIndex );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( visibility );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( windBearing );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( windGust );
-    GET_DISPLAY_DATA_CURRENT_DARKSKY ( windSpeed );
+    auto const & f = j_.at ( "currently" );
+    auto & t       = d_;
+    GET_DATA ( apparentTemperature );
+    GET_DATA ( cloudCover );
+    GET_DATA ( dewPoint );
+    GET_DATA ( humidity );
+    GET_DATA ( icon );
+    GET_DATA ( nearestStormDistance );
+    GET_DATA ( ozone );
+    GET_DATA ( precipIntensity );
+    GET_DATA ( precipProbability );
+    GET_DATA ( pressure );
+    GET_DATA ( summary );
+    GET_DATA ( temperature );
+    GET_DATA ( time );
+    GET_DATA ( uvIndex );
+    GET_DATA ( visibility );
+    GET_DATA ( windBearing );
+    GET_DATA ( windGust );
+    d_.windGust *= 3.6f; // mps -> kmh.
+    GET_DATA ( windSpeed );
+    d_.windSpeed *= 3.6f; // mps -> kmh.
 }
 
-int main ( ) { std::cout << QUOTE ( apparentTemperature ) << nl; }
-
-struct DisplayDataHourly {
+struct DisplayDataDay {
     // darksky.
-    std::string apparentTemperature, cloudCover, dewPoint, humidity, icon, ozone, precipIntensity, precipProbability, pressure,
-        summary, temperature, time, uvIndex, visibility, windBearing, windGust, windSpeed;
-};
-
-struct DisplayDataDaily {
-    // darksky.
-    std::string apparentTemperatureHigh, apparentTemperatureHighTime, apparentTemperatureLow, apparentTemperatureLowTime,
-        apparentTemperatureMax, apparentTemperatureMaxTime, apparentTemperatureMin, apparentTemperatureMinTime, cloudCover,
-        dewPoint, humidity, icon, moonPhase, ozone, precipIntensity, precipIntensityMax, precipIntensityMaxTime, precipProbability,
-        precipType, pressure, summary, sunriseTime, sunsetTime, temperatureHigh, temperatureHighTime, temperatureLow,
-        temperatureLowTime, temperatureMax, temperatureMaxTime, temperatureMin, temperatureMinTime, time, uvIndex, uvIndexTime,
-        visibility, windBearing, windGust, windGustTime, windSpeed;
-    std::array<DisplayDataHourly, 24> hourly_data;
+    // apparentTemperatureHigh, apparentTemperatureHighTime, apparentTemperatureLow, apparentTemperatureLowTime,
+    // apparentTemperatureMax, apparentTemperatureMaxTime, apparentTemperatureMin, apparentTemperatureMinTime, cloudCover,
+    // dewPoint, humidity, icon, moonPhase, ozone, precipIntensity, precipIntensityMax, precipIntensityMaxTime, precipProbability,
+    // precipType, pressure, summary, sunriseTime, sunsetTime, temperatureHigh, temperatureHighTime, temperatureLow,
+    // temperatureLowTime, temperatureMax, temperatureMaxTime, temperatureMin, temperatureMinTime, time, uvIndex, uvIndexTime,
+    // visibility, windBearing, windGust, windGustTime, windSpeed;
+    float apparentTemperatureHigh;
+    std::time_t apparentTemperatureHighTime;
+    float apparentTemperatureLow;
+    std::time_t apparentTemperatureLowTime;
+    float apparentTemperatureMax;
+    std::time_t apparentTemperatureMaxTime;
+    float apparentTemperatureMin;
+    std::time_t apparentTemperatureMinTime;
+    float cloudCover, dewPoint, humidity;
+    std::string icon;
+    float moonPhase, ozone, precipIntensity, precipIntensityMax;
+    std::time_t precipIntensityMaxTime;
+    float precipProbability;
+    std::string precipType;
+    float pressure;
+    std::string summary;
+    std::time_t sunriseTime, sunsetTime;
+    float temperatureHigh;
+    std::time_t temperatureHighTime;
+    float temperatureLow;
+    std::time_t temperatureLowTime;
+    float temperatureMax;
+    std::time_t temperatureMaxTime;
+    float temperatureMin;
+    std::time_t temperatureMinTime, time;
+    int uvIndex;
+    std::time_t uvIndexTime;
+    float visibility;
+    int windBearing;
+    float windGust;
+    std::time_t windGustTime;
+    float windSpeed;
     // apixu.
-    std::string sunrise, sunset, moonrise, moonset;
+    // sunrise, sunset, moonrise, moonset
+    // std::string sunrise, sunset, moonrise, moonset;
 };
+
+using DisplayDataDaily = std::array<DisplayDataDay, 8>;
+
+inline void from_json ( json const & j_, DisplayDataDaily & d_ ) {
+    int i = 0;
+    for ( auto const & f : j_.at ( "daily" ).at ( "data" ) ) {
+        auto & t = d_[ i ];
+        GET_DATA ( apparentTemperatureHigh );
+        GET_DATA ( apparentTemperatureHighTime );
+        GET_DATA ( apparentTemperatureLow );
+        GET_DATA ( apparentTemperatureLowTime );
+        GET_DATA ( apparentTemperatureMax );
+        GET_DATA ( apparentTemperatureMaxTime );
+        GET_DATA ( apparentTemperatureMin );
+        GET_DATA ( apparentTemperatureMinTime );
+        GET_DATA ( cloudCover );
+        GET_DATA ( dewPoint );
+        GET_DATA ( humidity );
+        GET_DATA ( icon );
+        GET_DATA ( moonPhase );
+        GET_DATA ( ozone );
+        GET_DATA ( precipIntensity );
+        GET_DATA ( precipIntensityMax );
+        GET_DATA ( precipIntensityMaxTime );
+        GET_DATA ( precipProbability );
+        GET_DATA ( precipType );
+        GET_DATA ( pressure );
+        GET_DATA ( summary );
+        GET_DATA ( sunriseTime );
+        GET_DATA ( sunsetTime );
+        GET_DATA ( temperatureHigh );
+        GET_DATA ( temperatureHighTime );
+        GET_DATA ( temperatureLow );
+        GET_DATA ( temperatureLowTime );
+        GET_DATA ( temperatureMax );
+        GET_DATA ( temperatureMaxTime );
+        GET_DATA ( temperatureMin );
+        GET_DATA ( temperatureMinTime );
+        GET_DATA ( time );
+        GET_DATA ( uvIndex );
+        GET_DATA ( uvIndexTime );
+        GET_DATA ( visibility );
+        GET_DATA ( windBearing );
+        GET_DATA ( windGust );
+        t.windGust *= 3.6f; // mps -> kmh.
+        GET_DATA ( windGustTime );
+        GET_DATA ( windSpeed );
+        t.windSpeed *= 3.6f; // mps -> kmh.
+        ++i;
+    }
+}
+
+struct DisplayDataHour {
+    // darksky.
+    // apparentTemperature, cloudCover, dewPoint, humidity, icon, ozone, precipIntensity, precipProbability, pressure,
+    // summary, temperature, time, uvIndex, visibility, windBearing, windGust, windSpeed;
+    float apparentTemperature, cloudCover, dewPoint, humidity;
+    std::string icon;
+    float ozone, precipIntensity, precipProbability, pressure;
+    std::string summary;
+    float temperature;
+    std::time_t time;
+    int uvIndex;
+    float visibility;
+    int windBearing;
+    float windGust, windSpeed;
+};
+
+using DisplayDataHourly = std::array<DisplayDataHour, 169>;
+
+inline void from_json ( json const & j_, DisplayDataHourly & d_ ) {
+    int i = 0;
+    for ( auto const & f : j_.at ( "hourly" ).at ( "data" ) ) {
+        auto & t = d_[ i ];
+        GET_DATA ( apparentTemperature );
+        GET_DATA ( cloudCover );
+        GET_DATA ( dewPoint );
+        GET_DATA ( humidity );
+        GET_DATA ( icon );
+        GET_DATA ( ozone );
+        GET_DATA ( precipIntensity );
+        GET_DATA ( precipProbability );
+        GET_DATA ( pressure );
+        GET_DATA ( summary );
+        GET_DATA ( temperature );
+        GET_DATA ( time );
+        GET_DATA ( uvIndex );
+        GET_DATA ( visibility );
+        GET_DATA ( windBearing );
+        GET_DATA ( windGust );
+        t.windGust *= 3.6f; // mps -> kmh.
+        GET_DATA ( windSpeed );
+        t.windSpeed *= 3.6f; // mps -> kmh.
+        ++i;
+    }
+}
 
 struct DisplayData {
-    DisplayDataCurrent current_data;
-    std::array<DisplayDataDaily, 7> daily_data;
+    DisplayDataCurrent currentData;
+    DisplayDataDaily dailyData;
+    DisplayDataHourly hourlyData;
 };
 
-int main56867 ( ) {
-    /*
+inline void from_json ( json const & j_, DisplayData & d_ ) {
+    d_.currentData = j_;
+    d_.dailyData   = j_;
+    d_.hourlyData  = j_;
+}
 
-    init ( );
-    curlpp::Cleanup myCleanup;
+int main ( ) {
 
-    json forcast_apixu{ forcast_query_apixu ( "acharavi", "greece" ) };
-    std::cout << forcast_apixu.dump ( g_indent ) << nl;
-
-    json forcast_darksky{ forcast_query_darksky ( "acharavi", "greece" ) };
-    std::cout << forcast_darksky.dump ( g_indent ) << nl;
-
-    json forcast_apixu{ load_from_file ( "apixu_acharavi_greece" ) };
-    std::cout << forcast_apixu.dump ( g_indent ) << nl;
-
-
-
-    json forcast_darksky{ load_from_file ( "darksky_acharavi_greece" ) };
-    std::cout << forcast_darksky.dump ( g_indent ) << nl;
-
-    std::cout << sf::systemTime ( ) << nl;
-    */
     App app;
 
+    // json fa = forcast_apixu ( "acharavi", "greece" );
+    // std::cout << fa.dump ( g_indent ) << nl;
+
+    json fd = forcast_darksky ( "acharavi", "greece" );
+    std::cout << fd.dump ( g_indent ) << nl;
+
+    DisplayData ddc = fd;
+
+    std::cout << ddc.hourlyData[ 2 ].humidity << nl;
+
+    /*
     while ( app.is_active ( ) ) {
         app.run ( );
     }
+    */
 
     return EXIT_SUCCESS;
 }

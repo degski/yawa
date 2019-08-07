@@ -78,10 +78,10 @@ inline constexpr int descriptions_size ( ) noexcept {
     return static_cast<int> ( sizeof ( g_descriptions ) / sizeof ( g_descriptions[ 0 ] ) );
 }
 
-[[nodiscard]] std::string darksky_forcast_query_string ( location_t const & loc_ );
-[[nodiscard]] std::string apixu_forcast_query_string ( location_t const & loc_ );
-
 [[nodiscard]] json forcast_query_apixu ( std::string const & name_, std::string const & country_ );
 [[nodiscard]] json forcast_query_darksky ( std::string const & name_, std::string const & country_ );
+
+[[nodiscard]] json forcast_apixu ( std::string const & name_, std::string const & country_ );
+[[nodiscard]] json forcast_darksky ( std::string const & name_, std::string const & country_ );
 
 // https://api.met.no/weatherapi/locationforecast/1.9/.json?lat=39.79&lon=19.81&msl=6
