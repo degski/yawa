@@ -158,9 +158,6 @@ struct DisplayDataDay {
     float windGust;
     std::time_t windGustTime;
     float windSpeed;
-    // apixu.
-    // sunrise, sunset, moonrise, moonset
-    // std::string sunrise, sunset, moonrise, moonset;
 };
 
 using DisplayDataDaily = std::array<DisplayDataDay, 8>;
@@ -271,19 +268,45 @@ inline void from_json ( json const & j_, DisplayData & d_ ) {
     d_.hourly  = j_;
 }
 
+struct DisplayDataAstroDay {
+    // apixu.
+    // sunrise, sunset, moonrise, moonset
+    std::string sunrise, sunset, moonrise, moonset;
+    std::time_t time;
+};
+
+using DisplayDataAstroDaily = std::array<DisplayDataAstroDay, 7>;
+
+inline void from_json ( json const & j_, DisplayDataAstroDaily & d_ ) {
+    int i = 0;
+    for ( auto const & f_ : j_.at ( "forecast" ).at ( "forecastday" ) ) {
+        auto const & f = f_.at ( "astro" );
+        auto & t       = d_[ i ];
+        GET_DATA ( sunrise );
+        GET_DATA ( sunset );
+        GET_DATA ( moonrise );
+        GET_DATA ( moonset );
+        f_.at ( "date_epoch" ).get_to ( t.time );
+        ++i;
+    }
+}
+
 int main ( ) {
 
     App app;
 
-    // json fa = forcast_apixu ( "acharavi", "greece" );
-    // std::cout << fa.dump ( g_indent ) << nl;
+    json fa = forcast_apixu ( "acharavi", "greece" );
+    std::cout << fa.dump ( g_indent ) << nl;
 
     json fd = forcast_darksky ( "acharavi", "greece" );
     std::cout << fd.dump ( g_indent ) << nl;
 
     DisplayData ddc = fd;
 
-    std::cout << ddc.hourlyData[ 2 ].humidity << nl;
+    DisplayDataAstroDaily ddad = fa;
+
+    std::cout << ddc.hourly[ 2 ].humidity << nl;
+    std::cout << ddad[ 2 ].sunrise << nl;
 
     /*
     while ( app.is_active ( ) ) {
