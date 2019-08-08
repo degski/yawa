@@ -277,8 +277,11 @@ inline void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
     {
         auto const & f = j_;
         auto & t       = d_.time;
+        GET_DATA ( offset )
+        t.offset *= 3'600;
         GET_DATA ( timezone )
-        t.offset = date::make_zoned ( d_.time.timezone, std::chrono::system_clock::now ( ) ).get_info ( ).offset.count ( ) / 3'600;
+        // t.offset = date::make_zoned ( d_.time.timezone, std::chrono::system_clock::now ( ) ).get_info ( ).offset.count ( ) /
+        // 3'600;
     }
 }
 
