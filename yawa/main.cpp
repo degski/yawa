@@ -39,6 +39,7 @@
 #include <sax/iostream.hpp>
 #include <sstream>
 #include <string>
+#include <string_view>
 #include <type_traits>
 #include <vector>
 
@@ -161,10 +162,16 @@ struct DisplayDataDarkskyHour {
 
 using DisplayDataDarkskyHourly = std::array<DisplayDataDarkskyHour, 169>;
 
+struct DisplayDataDarkskyLocalTime {
+    int offset;
+    std::string timezone;
+};
+
 struct DisplayDataDarksky {
     DisplayDataDarkskyCurrent current;
     DisplayDataDarkskyDaily daily;
     DisplayDataDarkskyHourly hourly;
+    DisplayDataDarkskyLocalTime time;
 };
 
 inline void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
@@ -267,6 +274,12 @@ inline void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
             ++i;
         }
     }
+    {
+        auto const & f = j_;
+        auto & t       = d_.time;
+        GET_DATA ( timezone )
+        t.offset = date::make_zoned ( d_.time.timezone, std::chrono::system_clock::now ( ) ).get_info ( ).offset.count ( ) / 3'600;
+    }
 }
 
 struct DisplayDataApixuDay {
@@ -315,20 +328,19 @@ int main ( ) {
     App app;
 
     try {
-
-        auto p = place_data ( "Chicago", "United States" );
-
-        json fa = forcast_query_apixu ( "Chicago", "United States" );
+        json fa = forcast_apixu ( "Chicago", "United States" );
         std::cout << fa.dump ( g_indent ) << nl;
 
-        json fd = forcast_query_darksky ( "Chicago", "United States" );
+        json fd = forcast_darksky ( "Chicago", "United States" );
         std::cout << fd.dump ( g_indent ) << nl;
 
         DisplayDataDarksky ddc = fd;
 
         DisplayDataApixuDaily ddad = fa;
 
-        std::cout << ddc.hourly[ 2 ].humidity << nl;
+        std::cout << ddc.hourly[ 0 ].humidity << nl;
+        std::cout << ddc.time.timezone << nl;
+
         std::cout << ddad[ 2 ].sunrise << nl;
 
         /*
@@ -393,7 +405,8 @@ int main5 ( ) {
     return EXIT_SUCCESS;
 }
 
-int main655676 ( ) {
+int main6567 ( ) {
+
     auto & db = date::get_tzdb_list ( );
 
     return EXIT_SUCCESS;
