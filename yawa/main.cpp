@@ -77,7 +77,9 @@ using json = nlohmann::json;
 #define GET_DATA( PARAM )                                                                                                          \
     if ( f.count ( QUOTE ( PARAM ) ) ) {                                                                                           \
         f.at ( QUOTE ( PARAM ) ).get_to ( t.PARAM );                                                                               \
-    }
+    }                                                                                                                              \
+    else                                                                                                                           \
+        std::cout << "not found " QUOTE ( PARAM ) << nl;
 
 struct DisplayDataDarkskyCurrent {
     // darksky.
@@ -85,6 +87,7 @@ struct DisplayDataDarkskyCurrent {
     // precipProbability, pressure, summary, temperature, time, uvIndex, visibility, windBearing, windGust, windSpeed;
     float apparentTemperature, cloudCover, dewPoint, humidity;
     std::string icon;
+    int nearestStormBearing;
     float nearestStormDistance, ozone, precipIntensity, precipProbability, pressure;
     std::string summary;
     float temperature;
@@ -173,6 +176,7 @@ inline void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
         GET_DATA ( dewPoint )
         GET_DATA ( humidity )
         GET_DATA ( icon )
+        GET_DATA ( nearestStormBearing )
         GET_DATA ( nearestStormDistance )
         GET_DATA ( ozone )
         GET_DATA ( precipIntensity )
@@ -311,10 +315,13 @@ int main ( ) {
     App app;
 
     try {
-        json fa = forcast_apixu ( "acharavi", "greece" );
+
+        auto p = place_data ( "Chicago", "United States" );
+
+        json fa = forcast_query_apixu ( "Chicago", "United States" );
         std::cout << fa.dump ( g_indent ) << nl;
 
-        json fd = forcast_darksky ( "acharavi", "greece" );
+        json fd = forcast_query_darksky ( "Chicago", "United States" );
         std::cout << fd.dump ( g_indent ) << nl;
 
         DisplayDataDarksky ddc = fd;
