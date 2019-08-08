@@ -75,12 +75,21 @@ using json = nlohmann::json;
 
 #define Q_( x ) #x
 #define QUOTE( x ) Q_ ( x )
-#define GET_DATA( PARAM )                                                                                                          \
-    if ( f.count ( QUOTE ( PARAM ) ) ) {                                                                                           \
-        f.at ( QUOTE ( PARAM ) ).get_to ( t.PARAM );                                                                               \
-    }                                                                                                                              \
-    else                                                                                                                           \
-        std::cout << "not found " QUOTE ( PARAM ) << nl;
+
+#if _DEBUG
+#    define GET_DATA( PARAM )                                                                                                      \
+        if ( f.count ( QUOTE ( PARAM ) ) ) {                                                                                       \
+            f.at ( QUOTE ( PARAM ) ).get_to ( t.PARAM );                                                                           \
+        }                                                                                                                          \
+        else {                                                                                                                     \
+            std::cout << "not found " QUOTE ( PARAM ) << nl;                                                                       \
+        }
+#else
+#    define GET_DATA( PARAM )                                                                                                      \
+        if ( f.count ( QUOTE ( PARAM ) ) ) {                                                                                       \
+            f.at ( QUOTE ( PARAM ) ).get_to ( t.PARAM );                                                                           \
+        }
+#endif
 
 struct DisplayDataDarkskyCurrent {
     // darksky.
@@ -280,8 +289,7 @@ inline void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
         GET_DATA ( offset )
         t.offset *= 3'600;
         GET_DATA ( timezone )
-        // t.offset = date::make_zoned ( d_.time.timezone, std::chrono::system_clock::now ( ) ).get_info ( ).offset.count ( ) /
-        // 3'600;
+        t.offset = date::make_zoned ( d_.time.timezone, std::chrono::system_clock::now ( ) ).get_info ( ).offset.count ( ) / 3'600;
     }
 }
 
