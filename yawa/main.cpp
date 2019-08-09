@@ -82,12 +82,16 @@ using json = nlohmann::json;
             f.at ( QUOTE ( PARAM ) ).get_to ( t.PARAM );                                                                           \
         }                                                                                                                          \
         else {                                                                                                                     \
+            t.PARAM = {};                                                                                                          \
             std::cout << "not found " QUOTE ( PARAM ) << nl;                                                                       \
         }
 #else
 #    define GET_DATA( PARAM )                                                                                                      \
         if ( f.count ( QUOTE ( PARAM ) ) ) {                                                                                       \
             f.at ( QUOTE ( PARAM ) ).get_to ( t.PARAM );                                                                           \
+        }                                                                                                                          \
+        else {                                                                                                                     \
+            t.PARAM = {};                                                                                                          \
         }
 #endif
 
