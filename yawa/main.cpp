@@ -76,109 +76,85 @@ using json = nlohmann::json;
 #define Q_( x ) #x
 #define QUOTE( x ) Q_ ( x )
 
-#if 0
-
-
-// temperature, conv_percentage, integer, real, string, mps, time
-
 struct temperature_tag {};
 struct percentage_tag {};
 struct integer_tag {};
 struct real_tag {};
-struct string_tag {};
-struct mps_tag {};
+struct kmh_tag {};
 struct time_tag {};
+struct string_tag {};
 
-#    if _DEBUG
-#        define GET_DATA( PARAM, CONVERSION )                                                                                      \
-            if ( f.count ( QUOTE ( PARAM ) ) ) {                                                                                   \
-                f.at ( QUOTE ( PARAM ) ).get_to ( t.PARAM );                                                                       \
-            }                                                                                                                      \
-            else {                                                                                                                 \
-                t.PARAM = {};                                                                                                      \
-                std::cout << "key not found: " QUOTE ( PARAM ) << nl;                                                              \
-            }
-#    else
-#        define GET_DATA( PARAM, CONVERSION )                                                                                      \
-            if ( f.count ( QUOTE ( PARAM ) ) ) {                                                                                   \
-                auto const & f_param = f.at ( QUOTE ( PARAM ) );                                                                   \
-                if constexpr ( std::is_same<CONVERSION, temperature_tag>::value ) {                                                \
-                    float number = 0.0f;                                                                                           \
-                    f_param.get_to ( number );                                                                                     \
-                    t.PARAM = fmt::format ( "{0:.0f}\370", number );                                                               \
-                }                                                                                                                  \
-                else if constexpr ( std::is_same<CONVERSION, percentage_tag>::value ) {                                            \
-                    float number = 0.0f;                                                                                           \
-                    f_param.get_to ( number );                                                                                     \
-                    number *= 100.0f;                                                                                              \
-                    t.PARAM = fmt::format ( "{0:.0f}%", number );                                                                  \
-                }                                                                                                                  \
-                else if constexpr ( std::is_same<CONVERSION, integer_tag>::value ) {                                               \
-                    int number = 0;                                                                                                \
-                    f_param.get_to ( number );                                                                                     \
-                    t.PARAM = fmt::format ( "{}", number );                                                                        \
-                }                                                                                                                  \
-                else if constexpr ( std::is_same<CONVERSION, real_tag>::value ) {                                                  \
-                    float number = 0.0f;                                                                                           \
-                    f_param.get_to ( number );                                                                                     \
-                    t.PARAM = fmt::format ( "{0:.1f}", number );                                                                   \
-                }                                                                                                                  \
-                else if constexpr ( std::is_same<CONVERSION, mps_tag>::value ) {                                                   \
-                    float number = 0.0f;                                                                                           \
-                    f_param.get_to ( number );                                                                                     \
-                    number *= 3.6f;                                                                                                \
-                    t.PARAM = fmt::format ( "{0:.1f}", number );                                                                   \
-                }                                                                                                                  \
-                else if constexpr ( std::is_same<CONVERSION, time_tag>::value ) {                                                  \
-                    long long number = 0;                                                                                          \
-                    f_param.get_to ( number );                                                                                     \
-                    t.PARAM = number;                                                                                              \
-                }                                                                                                                  \
-                else {                                                                                                             \
-                    f_param.get_to ( t.PARAM );                                                                                    \
-                }                                                                                                                  \
-            }                                                                                                                      \
-            else {                                                                                                                 \
-                t.PARAM = {};                                                                                                      \
-            }
-#    endif
+template<typename Tag, typename T>
+typename std::enable_if<std::is_same<Tag, temperature_tag>::value>::type convert ( json const & f, char const param[], T & t ) {
+    if ( f.count ( param ) ) {
+        float number = 0.0f;
+        f.at ( param ).get_to ( number );
+        t = fmt::format ( "{0:.0f}\370", number );
+    }
+}
 
-#endif
+template<typename Tag, typename T>
+typename std::enable_if<std::is_same<Tag, percentage_tag>::value>::type convert ( json const & f, char const param[], T & t ) {
+    if ( f.count ( param ) ) {
+        float number = 0.0f;
+        f.at ( param ).get_to ( number );
+        number *= 100.0f;
+        t = fmt::format ( "{0:.0f}%", number );
+    }
+}
 
-#if _DEBUG
-#    define GET_DATA( PARAM )                                                                                                      \
-        if ( f.count ( QUOTE ( PARAM ) ) ) {                                                                                       \
-            f.at ( QUOTE ( PARAM ) ).get_to ( t.PARAM );                                                                           \
-        }                                                                                                                          \
-        else {                                                                                                                     \
-            t.PARAM = {};                                                                                                          \
-            std::cout << "key not found: " QUOTE ( PARAM ) << nl;                                                                  \
-        }
-#else
-#    define GET_DATA( PARAM )                                                                                                      \
-        if ( f.count ( QUOTE ( PARAM ) ) ) {                                                                                       \
-            f.at ( QUOTE ( PARAM ) ).get_to ( t.PARAM );                                                                           \
-        }                                                                                                                          \
-        else {                                                                                                                     \
-            t.PARAM = {};                                                                                                          \
-        }
-#endif
+template<typename Tag, typename T>
+typename std::enable_if<std::is_same<Tag, integer_tag>::value>::type convert ( json const & f, char const param[], T & t ) {
+    if ( f.count ( param ) ) {
+        int number = 0;
+        f.at ( param ).get_to ( number );
+        t = fmt::format ( "{0:}", number );
+    }
+}
+
+template<typename Tag, typename T>
+typename std::enable_if<std::is_same<Tag, real_tag>::value>::type convert ( json const & f, char const param[], T & t ) {
+    if ( f.count ( param ) ) {
+        float number = 0.0f;
+        f.at ( param ).get_to ( number );
+        t = fmt::format ( "{0:.1f}", number );
+    }
+}
+
+template<typename Tag, typename T>
+typename std::enable_if<std::is_same<Tag, kmh_tag>::value>::type convert ( json const & f, char const param[], T & t ) {
+    if ( f.count ( param ) ) {
+        float number = 0.0f;
+        f.at ( param ).get_to ( number );
+        number *= 3.6f;
+        t = fmt::format ( "{0:.1f}", number );
+    }
+}
+
+template<typename Tag, typename T>
+typename std::enable_if<std::is_same<Tag, time_tag>::value>::type convert ( json const & f, char const param[], T & t ) {
+    if ( f.count ( param ) ) {
+        f.at ( param ).get_to ( t );
+    }
+}
+
+template<typename Tag, typename T>
+typename std::enable_if<std::is_same<Tag, string_tag>::value>::type convert ( json const & f, char const param[], T & t ) {
+    if ( f.count ( param ) ) {
+        f.at ( param ).get_to ( t );
+    }
+}
+
+#define GET_DATA( PARAM, CONVERSION ) convert<CONVERSION> ( f, QUOTE ( PARAM ), t.PARAM );
 
 struct DisplayDataDarkskyCurrent {
     // darksky.
     // apparentTemperature, cloudCover, dewPoint, humidity, icon, nearestStormDistance, ozone, precipIntensity,
     // precipProbability, pressure, summary, temperature, time, uvIndex, visibility, windBearing, windGust, windSpeed;
-    float apparentTemperature, cloudCover, dewPoint, humidity;
-    std::string icon;
-    int nearestStormBearing;
-    float nearestStormDistance, ozone, precipIntensity, precipProbability, pressure;
-    std::string summary;
-    float temperature;
+    std::string apparentTemperature, cloudCover, dewPoint, humidity, icon, nearestStormBearing, nearestStormDistance, ozone,
+        precipIntensity, precipProbability, pressure, summary, temperature;
     std::time_t time;
-    int uvIndex;
-    float visibility;
-    int windBearing;
-    float windGust, windSpeed;
+    std::string uvIndex, visibility, windBearing, windGust, windSpeed;
     bool isDay;
 };
 
@@ -190,38 +166,31 @@ struct DisplayDataDarkskyDay {
     // precipType, pressure, summary, sunriseTime, sunsetTime, temperatureHigh, temperatureHighTime, temperatureLow,
     // temperatureLowTime, temperatureMax, temperatureMaxTime, temperatureMin, temperatureMinTime, time, uvIndex, uvIndexTime,
     // visibility, windBearing, windGust, windGustTime, windSpeed;
-    float apparentTemperatureHigh;
+    std::string apparentTemperatureHigh;
     std::time_t apparentTemperatureHighTime;
-    float apparentTemperatureLow;
+    std::string apparentTemperatureLow;
     std::time_t apparentTemperatureLowTime;
-    float apparentTemperatureMax;
+    std::string apparentTemperatureMax;
     std::time_t apparentTemperatureMaxTime;
-    float apparentTemperatureMin;
+    std::string apparentTemperatureMin;
     std::time_t apparentTemperatureMinTime;
-    float cloudCover, dewPoint, humidity;
-    std::string icon;
-    float moonPhase, ozone, precipIntensity, precipIntensityMax;
+    std::string cloudCover, dewPoint, humidity, icon, moonPhase, ozone, precipIntensity, precipIntensityMax;
     std::time_t precipIntensityMaxTime;
-    float precipProbability;
-    std::string precipType;
-    float pressure;
-    std::string summary;
+    std::string precipProbability, precipType, pressure, summary;
     std::time_t sunriseTime, sunsetTime;
-    float temperatureHigh;
+    std::string temperatureHigh;
     std::time_t temperatureHighTime;
-    float temperatureLow;
+    std::string temperatureLow;
     std::time_t temperatureLowTime;
-    float temperatureMax;
+    std::string temperatureMax;
     std::time_t temperatureMaxTime;
-    float temperatureMin;
+    std::string temperatureMin;
     std::time_t temperatureMinTime, time;
-    int uvIndex;
+    std::string uvIndex;
     std::time_t uvIndexTime;
-    float visibility;
-    int windBearing;
-    float windGust;
+    std::string visibility, windBearing, windGust;
     std::time_t windGustTime;
-    float windSpeed;
+    std::string windSpeed;
 };
 
 using DisplayDataDarkskyDaily = std::array<DisplayDataDarkskyDay, 8>;
@@ -230,16 +199,10 @@ struct DisplayDataDarkskyHour {
     // darksky.
     // apparentTemperature, cloudCover, dewPoint, humidity, icon, ozone, precipIntensity, precipProbability, pressure,
     // summary, temperature, time, uvIndex, visibility, windBearing, windGust, windSpeed;
-    float apparentTemperature, cloudCover, dewPoint, humidity;
-    std::string icon;
-    float ozone, precipIntensity, precipProbability, pressure;
-    std::string summary;
-    float temperature;
+    std::string apparentTemperature, cloudCover, dewPoint, humidity, icon, ozone, precipIntensity, precipProbability, pressure,
+        summary, temperature;
     std::time_t time;
-    int uvIndex;
-    float visibility;
-    int windBearing;
-    float windGust, windSpeed;
+    std::string uvIndex, visibility, windBearing, windGust, windSpeed;
 };
 
 using DisplayDataDarkskyHourly = std::array<DisplayDataDarkskyHour, 169>;
@@ -260,73 +223,69 @@ inline void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
     {
         auto const & f = j_.at ( "currently" );
         auto & t       = d_.current;
-        GET_DATA ( apparentTemperature )
-        GET_DATA ( cloudCover )
-        GET_DATA ( dewPoint )
-        GET_DATA ( humidity )
-        GET_DATA ( icon )
-        GET_DATA ( nearestStormBearing )
-        GET_DATA ( nearestStormDistance )
-        GET_DATA ( ozone )
-        GET_DATA ( precipIntensity )
-        GET_DATA ( precipProbability )
-        GET_DATA ( pressure )
-        GET_DATA ( summary )
-        GET_DATA ( temperature )
-        GET_DATA ( time )
-        GET_DATA ( uvIndex )
-        GET_DATA ( visibility )
-        GET_DATA ( windBearing )
-        GET_DATA ( windGust )
-        t.windGust *= 3.6f; // mps -> kmh.
-        GET_DATA ( windSpeed )
-        t.windSpeed *= 3.6f; // mps -> kmh.
+        GET_DATA ( apparentTemperature, temperature_tag )
+        GET_DATA ( cloudCover, percentage_tag )
+        GET_DATA ( dewPoint, temperature_tag )
+        GET_DATA ( humidity, percentage_tag )
+        GET_DATA ( icon, string_tag )
+        GET_DATA ( nearestStormBearing, integer_tag )
+        GET_DATA ( nearestStormDistance, integer_tag )
+        GET_DATA ( ozone, real_tag )
+        GET_DATA ( precipIntensity, real_tag )
+        GET_DATA ( precipProbability, percentage_tag )
+        GET_DATA ( pressure, real_tag )
+        GET_DATA ( summary, string_tag )
+        GET_DATA ( temperature, temperature_tag )
+        GET_DATA ( time, time_tag )
+        GET_DATA ( uvIndex, integer_tag )
+        GET_DATA ( visibility, real_tag )
+        GET_DATA ( windBearing, integer_tag )
+        GET_DATA ( windGust, kmh_tag )
+        GET_DATA ( windSpeed, kmh_tag )
     }
     {
         int i = 0;
         for ( auto const & f : j_.at ( "daily" ).at ( "data" ) ) {
             auto & t = d_.daily[ i ];
-            GET_DATA ( apparentTemperatureHigh )
-            GET_DATA ( apparentTemperatureHighTime )
-            GET_DATA ( apparentTemperatureLow )
-            GET_DATA ( apparentTemperatureLowTime )
-            GET_DATA ( apparentTemperatureMax )
-            GET_DATA ( apparentTemperatureMaxTime )
-            GET_DATA ( apparentTemperatureMin )
-            GET_DATA ( apparentTemperatureMinTime )
-            GET_DATA ( cloudCover )
-            GET_DATA ( dewPoint )
-            GET_DATA ( humidity )
-            GET_DATA ( icon )
-            GET_DATA ( moonPhase )
-            GET_DATA ( ozone )
-            GET_DATA ( precipIntensity )
-            GET_DATA ( precipIntensityMax )
-            GET_DATA ( precipIntensityMaxTime )
-            GET_DATA ( precipProbability )
-            GET_DATA ( precipType )
-            GET_DATA ( pressure )
-            GET_DATA ( summary )
-            GET_DATA ( sunriseTime )
-            GET_DATA ( sunsetTime )
-            GET_DATA ( temperatureHigh )
-            GET_DATA ( temperatureHighTime )
-            GET_DATA ( temperatureLow )
-            GET_DATA ( temperatureLowTime )
-            GET_DATA ( temperatureMax )
-            GET_DATA ( temperatureMaxTime )
-            GET_DATA ( temperatureMin )
-            GET_DATA ( temperatureMinTime )
-            GET_DATA ( time )
-            GET_DATA ( uvIndex )
-            GET_DATA ( uvIndexTime )
-            GET_DATA ( visibility )
-            GET_DATA ( windBearing )
-            GET_DATA ( windGust )
-            t.windGust *= 3.6f; // mps -> kmh.
-            GET_DATA ( windGustTime )
-            GET_DATA ( windSpeed )
-            t.windSpeed *= 3.6f; // mps -> kmh.
+            GET_DATA ( apparentTemperatureHigh, temperature_tag )
+            GET_DATA ( apparentTemperatureHighTime, time_tag )
+            GET_DATA ( apparentTemperatureLow, temperature_tag )
+            GET_DATA ( apparentTemperatureLowTime, time_tag )
+            GET_DATA ( apparentTemperatureMax, temperature_tag )
+            GET_DATA ( apparentTemperatureMaxTime, time_tag )
+            GET_DATA ( apparentTemperatureMin, temperature_tag )
+            GET_DATA ( apparentTemperatureMinTime, time_tag )
+            GET_DATA ( cloudCover, percentage_tag )
+            GET_DATA ( dewPoint, temperature_tag )
+            GET_DATA ( humidity, percentage_tag )
+            GET_DATA ( icon, string_tag )
+            GET_DATA ( moonPhase, percentage_tag )
+            GET_DATA ( ozone, real_tag )
+            GET_DATA ( precipIntensity, real_tag )
+            GET_DATA ( precipIntensityMax, real_tag )
+            GET_DATA ( precipIntensityMaxTime, time_tag )
+            GET_DATA ( precipProbability, percentage_tag )
+            GET_DATA ( precipType, string_tag )
+            GET_DATA ( pressure, real_tag )
+            GET_DATA ( summary, string_tag )
+            GET_DATA ( sunriseTime, time_tag )
+            GET_DATA ( sunsetTime, time_tag )
+            GET_DATA ( temperatureHigh, temperature_tag )
+            GET_DATA ( temperatureHighTime, time_tag )
+            GET_DATA ( temperatureLow, temperature_tag )
+            GET_DATA ( temperatureLowTime, time_tag )
+            GET_DATA ( temperatureMax, temperature_tag )
+            GET_DATA ( temperatureMaxTime, time_tag )
+            GET_DATA ( temperatureMin, temperature_tag )
+            GET_DATA ( temperatureMinTime, time_tag )
+            GET_DATA ( time, time_tag )
+            GET_DATA ( uvIndex, integer_tag )
+            GET_DATA ( uvIndexTime, time_tag )
+            GET_DATA ( visibility, real_tag )
+            GET_DATA ( windBearing, integer_tag )
+            GET_DATA ( windGust, kmh_tag )
+            GET_DATA ( windGustTime, time_tag )
+            GET_DATA ( windSpeed, kmh_tag )
             ++i;
         }
     }
@@ -334,34 +293,32 @@ inline void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
         int i = 0;
         for ( auto const & f : j_.at ( "hourly" ).at ( "data" ) ) {
             auto & t = d_.hourly[ i ];
-            GET_DATA ( apparentTemperature )
-            GET_DATA ( cloudCover )
-            GET_DATA ( dewPoint )
-            GET_DATA ( humidity )
-            GET_DATA ( icon )
-            GET_DATA ( ozone )
-            GET_DATA ( precipIntensity )
-            GET_DATA ( precipProbability )
-            GET_DATA ( pressure )
-            GET_DATA ( summary )
-            GET_DATA ( temperature )
-            GET_DATA ( time )
-            GET_DATA ( uvIndex )
-            GET_DATA ( visibility )
-            GET_DATA ( windBearing )
-            GET_DATA ( windGust )
-            t.windGust *= 3.6f; // mps -> kmh.
-            GET_DATA ( windSpeed )
-            t.windSpeed *= 3.6f; // mps -> kmh.
+            GET_DATA ( apparentTemperature, temperature_tag )
+            GET_DATA ( cloudCover, percentage_tag )
+            GET_DATA ( dewPoint, temperature_tag )
+            GET_DATA ( humidity, percentage_tag )
+            GET_DATA ( icon, string_tag )
+            GET_DATA ( ozone, real_tag )
+            GET_DATA ( precipIntensity, real_tag )
+            GET_DATA ( precipProbability, percentage_tag )
+            GET_DATA ( pressure, real_tag )
+            GET_DATA ( summary, string_tag )
+            GET_DATA ( temperature, temperature_tag )
+            GET_DATA ( time, time_tag )
+            GET_DATA ( uvIndex, integer_tag )
+            GET_DATA ( visibility, real_tag )
+            GET_DATA ( windBearing, integer_tag )
+            GET_DATA ( windGust, kmh_tag )
+            GET_DATA ( windSpeed, kmh_tag )
             ++i;
         }
     }
     {
         auto const & f = j_;
         auto & t       = d_.time;
-        GET_DATA ( offset )
+        GET_DATA ( offset, time_tag )
         t.offset *= 3'600;
-        GET_DATA ( timezone )
+        GET_DATA ( timezone, string_tag )
         t.offset = date::make_zoned ( d_.time.timezone, std::chrono::system_clock::now ( ) ).get_info ( ).offset.count ( ) / 3'600;
     }
 }
@@ -380,10 +337,10 @@ inline void from_json ( json const & j_, DisplayDataApixuDaily & d_ ) {
     for ( auto const & f_ : j_.at ( "forecast" ).at ( "forecastday" ) ) {
         auto const & f = f_.at ( "astro" );
         auto & t       = d_[ i ];
-        GET_DATA ( sunrise )
-        GET_DATA ( sunset )
-        GET_DATA ( moonrise )
-        GET_DATA ( moonset )
+        GET_DATA ( sunrise, string_tag )
+        GET_DATA ( sunset, string_tag )
+        GET_DATA ( moonrise, string_tag )
+        GET_DATA ( moonset, string_tag )
         f_.at ( "date_epoch" ).get_to ( t.time );
         ++i;
     }
@@ -424,6 +381,7 @@ int main ( ) {
 
         std::cout << ddc.hourly[ 0 ].humidity << nl;
         std::cout << ddc.time.timezone << nl;
+        std::cout << ddc.current.apparentTemperature << nl;
 
         std::cout << ddad[ 2 ].sunrise << nl;
 
