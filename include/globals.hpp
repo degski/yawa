@@ -27,6 +27,7 @@
 #include <charconv>
 #include <filesystem>
 #include <fstream>
+#include <sax/iostream.hpp>
 #include <sstream>
 #include <string>
 
@@ -41,6 +42,9 @@ namespace fs = std::filesystem;
 #include <cereal/types/map.hpp>
 #include <cereal/types/string.hpp>
 */
+
+#include <fmt/format.h>
+
 #include <nlohmann/json.hpp>
 
 #if _WIN32
@@ -51,9 +55,11 @@ namespace fs = std::filesystem;
 #    if defined( _DEBUG )
 #        pragma comment( lib, "zlibd.lib" )
 #        pragma comment( lib, "libcurl-d.lib" )
+#        pragma comment( lib, "fmtd.lib" )
 #    else
 #        pragma comment( lib, "zlib.lib" )
 #        pragma comment( lib, "libcurl.lib" )
+#        pragma comment( lib, "fmt.lib" )
 #    endif
 #    pragma comment( lib, "libcurlpp.lib" )
 #    pragma comment( lib, "tz.lib" )
@@ -80,14 +86,17 @@ inline bool is_write ( char const file_[] ) noexcept {
     return ( fs::status ( file_ ).permissions ( ) & fs::perms::owner_write ) != fs::perms::none;
 }
 
-template<typename T>
-[[nodiscard]] std::string to_string ( T const v_ ) noexcept {
-    std::array<char, 32> buf;
-    auto const res = std::to_chars ( buf.data ( ), buf.data ( ) + buf.size ( ), v_ );
-    if ( res.ec == std::errc ( ) )
-        return { buf.data ( ), static_cast<std::size_t> ( res.ptr - buf.data ( ) ) };
-    else
-        return {};
+[[nodiscard]] inline std::string to_string ( int const v_ ) noexcept {
+    return fmt::format ( "{}", v_ );
+}
+
+[[nodiscard]] inline std::string to_string ( float const v_, int const dec_ = 2 ) noexcept {
+    return fmt::format ( "{:.{}f}", v_, dec_ );
+}
+
+[[nodiscard]] inline std::string to_perc_string ( float v_, int const dec_ = 2 ) noexcept {
+    v_ *= 100.0f;
+    return fmt::format ( "{:.{}f}%", v_, dec_ );
 }
 
 template<typename T>

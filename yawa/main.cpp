@@ -83,7 +83,7 @@ using json = nlohmann::json;
         }                                                                                                                          \
         else {                                                                                                                     \
             t.PARAM = {};                                                                                                          \
-            std::cout << "not found " QUOTE ( PARAM ) << nl;                                                                       \
+            std::cout << "key not found: " QUOTE ( PARAM ) << nl;                                                                  \
         }
 #else
 #    define GET_DATA( PARAM )                                                                                                      \
