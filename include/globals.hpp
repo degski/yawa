@@ -86,18 +86,34 @@ inline bool is_write ( char const file_[] ) noexcept {
     return ( fs::status ( file_ ).permissions ( ) & fs::perms::owner_write ) != fs::perms::none;
 }
 
-[[nodiscard]] inline std::string to_string ( int const v_ ) noexcept {
-    return fmt::format ( "{}", v_ );
-}
+[[nodiscard]] inline std::string to_string ( int const v_ ) noexcept { return fmt::format ( "{0:}", v_ ); }
+inline void to_string ( std::string & s_, int const v_ ) noexcept { s_ = fmt::format ( "{0:}", v_ ); }
 
-[[nodiscard]] inline std::string to_string ( float const v_, int const dec_ = 2 ) noexcept {
-    return fmt::format ( "{:.{}f}", v_, dec_ );
+[[nodiscard]] inline std::string to_string ( float const v_, int const dec_ ) noexcept {
+    return fmt::format ( "{0:.{}f}", v_, dec_ );
 }
+inline void to_string ( std::string & s_, float const v_, int const dec_ ) noexcept { s_ = fmt::format ( "{0:.{}f}", v_, dec_ ); }
 
-[[nodiscard]] inline std::string to_perc_string ( float v_, int const dec_ = 2 ) noexcept {
+[[nodiscard]] inline std::string to_perc_string ( float v_ ) noexcept {
     v_ *= 100.0f;
-    return fmt::format ( "{:.{}f}%", v_, dec_ );
+    return fmt::format ( "{0:.0f}%", v_ );
 }
+inline void to_perc_string ( std::string & s_, float v_ ) noexcept {
+    v_ *= 100.0f;
+    s_ = fmt::format ( "{0:.0f}%", v_ );
+}
+
+[[nodiscard]] inline std::string to_perc_string ( float v_, int const dec_ ) noexcept {
+    v_ *= 100.0f;
+    return fmt::format ( "{0:.{}f}%", v_, dec_ );
+}
+inline void to_perc_string ( std::string & s_, float v_, int const dec_ ) noexcept {
+    v_ *= 100.0f;
+    s_ = fmt::format ( "{0:.{}f}%", v_, dec_ );
+}
+
+[[nodiscard]] inline std::string to_temp_string ( float v_ ) noexcept { return fmt::format ( "{0:.1f}\370", v_ ); }
+inline void to_temp_string ( std::string & s_, float v_ ) noexcept { s_ = fmt::format ( "{0:.1f}\370", v_ ); }
 
 template<typename T>
 [[nodiscard]] T mps_to_kmph ( T const mps_ ) noexcept {

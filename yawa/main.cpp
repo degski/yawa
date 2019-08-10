@@ -76,6 +76,75 @@ using json = nlohmann::json;
 #define Q_( x ) #x
 #define QUOTE( x ) Q_ ( x )
 
+#if 0
+
+
+// temperature, conv_percentage, integer, real, string, mps, time
+
+struct temperature_tag {};
+struct percentage_tag {};
+struct integer_tag {};
+struct real_tag {};
+struct string_tag {};
+struct mps_tag {};
+struct time_tag {};
+
+#    if _DEBUG
+#        define GET_DATA( PARAM, CONVERSION )                                                                                      \
+            if ( f.count ( QUOTE ( PARAM ) ) ) {                                                                                   \
+                f.at ( QUOTE ( PARAM ) ).get_to ( t.PARAM );                                                                       \
+            }                                                                                                                      \
+            else {                                                                                                                 \
+                t.PARAM = {};                                                                                                      \
+                std::cout << "key not found: " QUOTE ( PARAM ) << nl;                                                              \
+            }
+#    else
+#        define GET_DATA( PARAM, CONVERSION )                                                                                      \
+            if ( f.count ( QUOTE ( PARAM ) ) ) {                                                                                   \
+                auto const & f_param = f.at ( QUOTE ( PARAM ) );                                                                   \
+                if constexpr ( std::is_same<CONVERSION, temperature_tag>::value ) {                                                \
+                    float number = 0.0f;                                                                                           \
+                    f_param.get_to ( number );                                                                                     \
+                    t.PARAM = fmt::format ( "{0:.0f}\370", number );                                                               \
+                }                                                                                                                  \
+                else if constexpr ( std::is_same<CONVERSION, percentage_tag>::value ) {                                            \
+                    float number = 0.0f;                                                                                           \
+                    f_param.get_to ( number );                                                                                     \
+                    number *= 100.0f;                                                                                              \
+                    t.PARAM = fmt::format ( "{0:.0f}%", number );                                                                  \
+                }                                                                                                                  \
+                else if constexpr ( std::is_same<CONVERSION, integer_tag>::value ) {                                               \
+                    int number = 0;                                                                                                \
+                    f_param.get_to ( number );                                                                                     \
+                    t.PARAM = fmt::format ( "{}", number );                                                                        \
+                }                                                                                                                  \
+                else if constexpr ( std::is_same<CONVERSION, real_tag>::value ) {                                                  \
+                    float number = 0.0f;                                                                                           \
+                    f_param.get_to ( number );                                                                                     \
+                    t.PARAM = fmt::format ( "{0:.1f}", number );                                                                   \
+                }                                                                                                                  \
+                else if constexpr ( std::is_same<CONVERSION, mps_tag>::value ) {                                                   \
+                    float number = 0.0f;                                                                                           \
+                    f_param.get_to ( number );                                                                                     \
+                    number *= 3.6f;                                                                                                \
+                    t.PARAM = fmt::format ( "{0:.1f}", number );                                                                   \
+                }                                                                                                                  \
+                else if constexpr ( std::is_same<CONVERSION, time_tag>::value ) {                                                  \
+                    long long number = 0;                                                                                          \
+                    f_param.get_to ( number );                                                                                     \
+                    t.PARAM = number;                                                                                              \
+                }                                                                                                                  \
+                else {                                                                                                             \
+                    f_param.get_to ( t.PARAM );                                                                                    \
+                }                                                                                                                  \
+            }                                                                                                                      \
+            else {                                                                                                                 \
+                t.PARAM = {};                                                                                                      \
+            }
+#    endif
+
+#endif
+
 #if _DEBUG
 #    define GET_DATA( PARAM )                                                                                                      \
         if ( f.count ( QUOTE ( PARAM ) ) ) {                                                                                       \
