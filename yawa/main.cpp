@@ -208,7 +208,7 @@ struct DisplayDataDarkskyHour {
 using DisplayDataDarkskyHourly = std::array<DisplayDataDarkskyHour, 169>;
 
 struct DisplayDataDarkskyLocalTime {
-    int offset;
+    std::time_t offset;
     std::string timezone;
 };
 
