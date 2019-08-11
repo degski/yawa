@@ -73,27 +73,27 @@ void load_auth ( ) {
     g_auth = j.get<auth_t> ( );
 }
 
-std::string to_lowercase_string ( std::string const & str_ ) {
+std::string to_query_string ( std::string const & str_ ) {
     // std::locale::global ( std::locale ( "en_US.UTF-8" ) );
     auto & facet = std::use_facet<std::ctype<std::string::value_type>> ( std::locale ( ) );
     std::string s{ str_ };
     facet.tolower ( s.data ( ), s.data ( ) + s.length ( ) );
-    std::replace ( std::begin ( s ), std::end ( s ), ' ', '_' );
+    std::replace ( std::begin ( s ), std::end ( s ), ' ', '+' );
     return s;
 }
 
-std::string to_place_country_string ( std::string const & place_, std::string const & country_ ) {
+std::string to_query_string ( std::string const & place_, std::string const & country_ ) {
     std::string s;
     s.reserve ( place_.length ( ) + 1 + country_.length ( ) );
-    s.append ( to_lowercase_string ( place_ ) );
-    s.push_back ( '_' );
-    s.append ( to_lowercase_string ( country_ ) );
+    s.append ( to_query_string ( place_ ) );
+    s.push_back ( '+' );
+    s.append ( to_query_string ( country_ ) );
     return s;
 }
 
-std::string to_query_string ( std::string const & place_country_ ) {
-    std::string s{ place_country_ };
-    std::replace ( std::begin ( s ), std::end ( s ), '_', '+' );
+std::string to_place_country_string ( std::string const & place_country_query_ ) {
+    std::string s{ place_country_query_ };
+    std::replace ( std::begin ( s ), std::end ( s ), '+', '_' );
     return s;
 }
 
@@ -114,8 +114,7 @@ std::string to_query_string ( std::string const & place_country_ ) {
 
 place_t const & place_data ( std::string const & place_, std::string const & country_ ) {
     static place_t const not_found{ { "not_found", "not_found" }, "not_found", "not_found", "not_found" };
-    std::string place_country       = to_place_country_string ( place_, country_ );
-    std::string place_country_query = to_query_string ( place_country );
+    std::string place_country_query = to_query_string ( place_, country_ );
     auto it                         = g_geo.places.find ( place_country_query );
     if ( std::cend ( g_geo.places ) == it ) {
         json const location_query_result = query_url ( location_query_string ( place_country_query ) );
@@ -125,7 +124,7 @@ place_t const & place_data ( std::string const & place_, std::string const & cou
                           "",
                           place_,
                           country_,
-                          std::move ( place_country ) };
+                          to_place_country_string ( place_country_query ) };
             data.elevation =
                 to_string ( query_url ( elevation_query_string ( data.location ) )[ 0 ][ "statistics" ][ "elevation" ][ "value" ]
                                 .get<int> ( ) );
