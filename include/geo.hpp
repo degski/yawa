@@ -42,16 +42,22 @@ struct place_t {
     location_t location;
     std::string elevation;
     std::string place, country;
+    std::string place_country; // denver_united_states
 };
 
 inline void to_json ( json & j_, place_t const & p_ ) {
-    j_ = json{ { "location", p_.location }, { "elevation", p_.elevation }, { "place", p_.place }, { "country", p_.country } };
+    j_ = json{ { "location", p_.location },
+               { "elevation", p_.elevation },
+               { "place", p_.place },
+               { "country", p_.country },
+               { "place_country", p_.place_country } };
 }
 inline void from_json ( json const & j_, place_t & p_ ) {
     j_.at ( "location" ).get_to ( p_.location );
     j_.at ( "elevation" ).get_to ( p_.elevation );
     j_.at ( "place" ).get_to ( p_.place );
     j_.at ( "country" ).get_to ( p_.country );
+    j_.at ( "place_country" ).get_to ( p_.place_country );
 }
 
 struct geo_t {
@@ -81,9 +87,6 @@ void load_auth ( );
 
 [[nodiscard]] std::string load_file ( std::string const & filename );
 
-// Returns string, with spaces replaced by '+'.
-[[nodiscard]] std::string to_query_string ( std::string const & str_ );
-// Returns concatenated (with '+') string of name and country, with spaces replaced by '+'.
-[[nodiscard]] std::string to_query_string ( std::string const & place_, std::string const & country_ );
+[[nodiscard]] std::string to_place_country_string ( std::string const & place_, std::string const & country_ );
 
 [[nodiscard]] place_t const & place_data ( std::string const & place_, std::string const & country_ );

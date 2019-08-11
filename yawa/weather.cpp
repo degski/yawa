@@ -47,8 +47,9 @@ std::string apixu_forcast_query_string ( location_t const & loc_ ) {
 }
 
 json forcast_query_apixu ( std::string const & name_, std::string const & country_ ) {
-    json const forcast = query_url ( apixu_forcast_query_string ( place_data ( name_, country_ ).location ) );
-    std::ofstream o ( g_app_data_path / ( "apixu_" + name_ + "_" + country_ + ".json" ) );
+    auto const & pd    = place_data ( name_, country_ );
+    json const forcast = query_url ( apixu_forcast_query_string ( pd.location ) );
+    std::ofstream o ( g_app_data_path / ( "apixu_" + pd.place_country + ".json" ) );
     o << forcast.dump ( g_indent ) << std::endl;
     o.flush ( );
     o.close ( );
@@ -56,8 +57,9 @@ json forcast_query_apixu ( std::string const & name_, std::string const & countr
 }
 
 json forcast_query_darksky ( std::string const & name_, std::string const & country_ ) {
-    json const forcast = query_url ( darksky_forcast_query_string ( place_data ( name_, country_ ).location ) );
-    std::ofstream o ( g_app_data_path / ( "darksky_" + name_ + "_" + country_ + ".json" ) );
+    auto const & pd    = place_data ( name_, country_ );
+    json const forcast = query_url ( darksky_forcast_query_string ( pd.location ) );
+    std::ofstream o ( g_app_data_path / ( "darksky_" + pd.place_country + ".json" ) );
     o << forcast.dump ( g_indent ) << std::endl;
     o.flush ( );
     o.close ( );
@@ -65,17 +67,37 @@ json forcast_query_darksky ( std::string const & name_, std::string const & coun
 }
 
 json forcast_apixu ( std::string const & name_, std::string const & country_ ) {
+    auto const & pd = place_data ( name_, country_ );
     json forcast;
-    std::ifstream i ( g_app_data_path / ( "apixu_" + name_ + "_" + country_ + ".json" ) );
+    std::ifstream i ( g_app_data_path / ( "apixu_" + pd.place_country + ".json" ) );
     i >> forcast;
     i.close ( );
     return forcast;
 }
 
 json forcast_darksky ( std::string const & name_, std::string const & country_ ) {
+    auto const & pd = place_data ( name_, country_ );
     json forcast;
-    std::ifstream i ( g_app_data_path / ( "darksky_" + name_ + "_" + country_ + ".json" ) );
+    std::ifstream i ( g_app_data_path / ( "darksky_" + pd.place_country + ".json" ) );
     i >> forcast;
     i.close ( );
     return forcast;
 }
+
+/*
+json darksky ( std::string const & name_, std::string const & country_ ) {
+    place_data ( name_, country_ )
+        .
+
+        fs::path const file = g_app_data_path / ( "apixu_" + name_ + "_" + country_ + ".json" );
+    if ( fs::exists ( file ) ) {
+        json forcast;
+        std::ifstream i ( g_app_data_path / ( "darksky_" + name_ + "_" + country_ + ".json" ) );
+        i >> forcast;
+        i.close ( );
+        return forcast;
+    }
+    else {
+    }
+}
+*/

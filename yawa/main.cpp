@@ -54,11 +54,11 @@ namespace fs = std::filesystem;
 #include <string>
 #include <vector>
 
+#include "api.hpp"
 #include "app.hpp"
 #include "geo.hpp"
 #include "globals.hpp"
 #include "resource.h"
-#include "api.hpp"
 #include "weather.hpp"
 
 #include <date/date.h>
@@ -97,21 +97,21 @@ int main ( ) {
     App app;
 
     try {
-        json fa = forcast_apixu ( "Chicago", "United States" );
-        std::cout << fa.dump ( g_indent ) << nl;
+        // json fa = forcast_apixu ( "Denver", "CO United States" );
+        // std::cout << fa.dump ( g_indent ) << nl;
 
-        json fd = forcast_darksky ( "Chicago", "United States" );
+        json fd = forcast_query_darksky ( "Los Angeles", "United States" );
         std::cout << fd.dump ( g_indent ) << nl;
 
         DisplayDataDarksky ddc = fd;
 
-        DisplayDataApixuDaily ddad = fa;
+        // DisplayDataApixuDaily ddad = fa;
 
         std::cout << ddc.hourly[ 0 ].humidity << nl;
         std::cout << ddc.time.timezone << nl;
         std::cout << ddc.current.apparentTemperature << nl;
 
-        std::cout << ddad[ 2 ].sunrise << nl;
+        // std::cout << ddad[ 2 ].sunrise << nl;
 
         /*
         while ( app.is_active ( ) ) {

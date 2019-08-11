@@ -84,7 +84,7 @@ typename std::enable_if<std::is_same<Tag, real_tag>::value>::type convert ( json
 template<typename Tag, typename T>
 typename std::enable_if<std::is_same<Tag, string_tag>::value>::type convert ( json const & f, char const param[], T & t ) {
     if ( f.count ( param ) )
-        f.at ( param ).get_to ( t )
+        f.at ( param ).get_to ( t );
 }
 
 template<typename Tag, typename T>

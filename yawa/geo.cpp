@@ -24,6 +24,7 @@
 #include <filesystem>
 #include <fstream>
 #include <limits>
+#include <locale>
 #include <sax/iostream.hpp>
 #include <sstream>
 #include <string>
@@ -72,18 +73,27 @@ void load_auth ( ) {
     g_auth = j.get<auth_t> ( );
 }
 
-std::string to_query_string ( std::string const & str_ ) {
+std::string to_lowercase_string ( std::string const & str_ ) {
+    // std::locale::global ( std::locale ( "en_US.UTF-8" ) );
+    auto & facet = std::use_facet<std::ctype<std::string::value_type>> ( std::locale ( ) );
     std::string s{ str_ };
-    std::replace ( std::begin ( s ), std::end ( s ), ' ', '+' );
+    facet.tolower ( s.data ( ), s.data ( ) + s.length ( ) );
+    std::replace ( std::begin ( s ), std::end ( s ), ' ', '_' );
     return s;
 }
 
-std::string to_query_string ( std::string const & place_, std::string const & country_ ) {
+std::string to_place_country_string ( std::string const & place_, std::string const & country_ ) {
     std::string s;
     s.reserve ( place_.length ( ) + 1 + country_.length ( ) );
-    s.append ( to_query_string ( place_ ) );
-    s.push_back ( '+' );
-    s.append ( to_query_string ( country_ ) );
+    s.append ( to_lowercase_string ( place_ ) );
+    s.push_back ( '_' );
+    s.append ( to_lowercase_string ( country_ ) );
+    return s;
+}
+
+std::string to_query_string ( std::string const & place_country_ ) {
+    std::string s{ place_country_ };
+    std::replace ( std::begin ( s ), std::end ( s ), '_', '+' );
     return s;
 }
 
@@ -104,20 +114,22 @@ std::string to_query_string ( std::string const & place_, std::string const & co
 
 place_t const & place_data ( std::string const & place_, std::string const & country_ ) {
     static place_t const not_found{ { "not_found", "not_found" }, "not_found", "not_found", "not_found" };
-    std::string place_country = to_query_string ( place_, country_ );
-    auto it                   = g_geo.places.find ( place_country );
+    std::string place_country       = to_place_country_string ( place_, country_ );
+    std::string place_country_query = to_query_string ( place_country );
+    auto it                         = g_geo.places.find ( place_country_query );
     if ( std::cend ( g_geo.places ) == it ) {
-        json const location_query_result = query_url ( location_query_string ( place_country ) );
+        json const location_query_result = query_url ( location_query_string ( place_country_query ) );
         if ( "OK" == location_query_result[ "status" ] ) {
             auto const location = location_query_result[ "results" ][ 0 ][ "geometry" ][ "location" ];
             place_t data{ { to_string ( location[ "lat" ].get<float> ( ) ), to_string ( location[ "lng" ].get<float> ( ) ) },
                           "",
                           place_,
-                          country_ };
+                          country_,
+                          std::move ( place_country ) };
             data.elevation =
                 to_string ( query_url ( elevation_query_string ( data.location ) )[ 0 ][ "statistics" ][ "elevation" ][ "value" ]
                                 .get<int> ( ) );
-            place_t const & rv = g_geo.places.emplace ( std::move ( place_country ), std::move ( data ) ).first->second;
+            place_t const & rv = g_geo.places.emplace ( std::move ( place_country_query ), std::move ( data ) ).first->second;
             save_geo ( );
             return rv;
         }
