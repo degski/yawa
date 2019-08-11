@@ -76,7 +76,7 @@ using json = nlohmann::json;
 
 // Everything in local time.
 
-void handleEptr ( std::exception_ptr eptr ) { // Passing by value is ok.
+void handle_eptr ( std::exception_ptr eptr ) { // Passing by value is ok.
     try {
         if ( eptr )
             std::rethrow_exception ( eptr );
@@ -102,14 +102,15 @@ int main ( ) {
 
         json fd = forcast_load_darksky ( "Los Angeles", "United States" );
         std::cout << fd.dump ( g_indent ) << nl;
+        json fa = forcast_load_apixu ( "Los Angeles", "United States" );
+        std::cout << fa.dump ( g_indent ) << nl;
 
-        DisplayDataDarksky ddc = fd;
+        data.darksky = fd;
+        data.apixu   = fa;
 
-        // DisplayDataApixu dda = fa;
-
-        std::cout << ddc.hourly[ 0 ].humidity << nl;
-        std::cout << ddc.time.timezone << nl;
-        std::cout << ddc.current.apparentTemperature << nl;
+        std::cout << data.darksky.hourly[ 0 ].humidity << nl;
+        std::cout << data.darksky.time.timezone << nl;
+        std::cout << data.darksky.current.apparentTemperature << nl;
 
         // std::cout << ddad.daily[ 2 ].sunrise << nl;
 
@@ -122,7 +123,7 @@ int main ( ) {
     catch ( ... ) {
         eptr = std::current_exception ( ); // Capture.
     }
-    handleEptr ( eptr );
+    handle_eptr ( eptr );
 
     return EXIT_SUCCESS;
 }

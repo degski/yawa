@@ -26,6 +26,7 @@
 #include <map>
 #include <string>
 
+#include "api.hpp"
 #include "globals.hpp"
 
 // https://api.met.no/weatherapi/weathericon/1.1/documentation

@@ -105,7 +105,6 @@ typename std::enable_if<std::is_same<Tag, time_tag>::value>::type convert ( json
 #define GET_API_DATA( PARAM, CONVERSION ) convert<CONVERSION> ( f, QUOTE ( PARAM ), t.PARAM );
 
 void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
-    std::time_t time = std::time ( nullptr );
     {
         auto const & f = j_.at ( "currently" );
         auto & t       = d_.current;
@@ -207,11 +206,10 @@ void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
         GET_API_DATA ( timezone, string_tag )
         t.offset = date::make_zoned ( d_.time.timezone, std::chrono::system_clock::now ( ) ).get_info ( ).offset.count ( ) / 3'600;
     }
-    d_.update_time = time;
+    d_.update_time = d_.current.time;
 }
 
 void from_json ( json const & j_, DisplayDataApixu & d_ ) {
-    std::time_t time = std::time ( nullptr );
     {
         int i = 0;
         for ( auto const & f_ : j_.at ( "forecast" ).at ( "forecastday" ) ) {
@@ -225,5 +223,5 @@ void from_json ( json const & j_, DisplayDataApixu & d_ ) {
             ++i;
         }
     }
-    d_.update_time = time;
+    d_.update_local_time = j_.at ( "location" ).at ( "localtime_epoch" ).get<std::time_t> ( );
 }

@@ -87,6 +87,6 @@ void load_auth ( );
 
 [[nodiscard]] std::string load_file ( std::string const & filename );
 
-[[nodiscard]] std::string to_place_country_string ( std::string const & place_, std::string const & country_ );
+[[nodiscard]] std::string to_place_country_string ( std::string const & place_country_ );
 
 [[nodiscard]] place_t const & place_data ( std::string const & place_, std::string const & country_ );
