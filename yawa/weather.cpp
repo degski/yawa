@@ -66,7 +66,7 @@ json forcast_query_darksky ( std::string const & name_, std::string const & coun
     return forcast;
 }
 
-json forcast_apixu ( std::string const & name_, std::string const & country_ ) {
+json forcast_load_apixu ( std::string const & name_, std::string const & country_ ) {
     auto const & pd = place_data ( name_, country_ );
     json forcast;
     std::ifstream i ( g_app_data_path / ( "apixu_" + pd.place_country + ".json" ) );
@@ -75,7 +75,7 @@ json forcast_apixu ( std::string const & name_, std::string const & country_ ) {
     return forcast;
 }
 
-json forcast_darksky ( std::string const & name_, std::string const & country_ ) {
+json forcast_load_darksky ( std::string const & name_, std::string const & country_ ) {
     auto const & pd = place_data ( name_, country_ );
     json forcast;
     std::ifstream i ( g_app_data_path / ( "darksky_" + pd.place_country + ".json" ) );

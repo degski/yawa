@@ -97,7 +97,7 @@ int main ( ) {
     App app;
 
     try {
-        // json fa = forcast_apixu ( "Denver", "CO United States" );
+        // json fa = forcast_load_apixu ( "Denver", "CO United States" );
         // std::cout << fa.dump ( g_indent ) << nl;
 
         json fd = forcast_query_darksky ( "Los Angeles", "United States" );
