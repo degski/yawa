@@ -105,6 +105,7 @@ typename std::enable_if<std::is_same<Tag, time_tag>::value>::type convert ( json
 #define GET_API_DATA( PARAM, CONVERSION ) convert<CONVERSION> ( f, QUOTE ( PARAM ), t.PARAM );
 
 void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
+    std::time_t time = std::time ( nullptr );
     {
         auto const & f = j_.at ( "currently" );
         auto & t       = d_.current;
@@ -206,18 +207,23 @@ void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
         GET_API_DATA ( timezone, string_tag )
         t.offset = date::make_zoned ( d_.time.timezone, std::chrono::system_clock::now ( ) ).get_info ( ).offset.count ( ) / 3'600;
     }
+    d_.update_time = time;
 }
 
-void from_json ( json const & j_, DisplayDataApixuDaily & d_ ) {
-    int i = 0;
-    for ( auto const & f_ : j_.at ( "forecast" ).at ( "forecastday" ) ) {
-        auto const & f = f_.at ( "astro" );
-        auto & t       = d_[ i ];
-        GET_API_DATA ( sunrise, string_tag )
-        GET_API_DATA ( sunset, string_tag )
-        GET_API_DATA ( moonrise, string_tag )
-        GET_API_DATA ( moonset, string_tag )
-        f_.at ( "date_epoch" ).get_to ( t.time );
-        ++i;
+void from_json ( json const & j_, DisplayDataApixu & d_ ) {
+    std::time_t time = std::time ( nullptr );
+    {
+        int i = 0;
+        for ( auto const & f_ : j_.at ( "forecast" ).at ( "forecastday" ) ) {
+            auto const & f = f_.at ( "astro" );
+            auto & t       = d_.daily[ i ];
+            GET_API_DATA ( sunrise, string_tag )
+            GET_API_DATA ( sunset, string_tag )
+            GET_API_DATA ( moonrise, string_tag )
+            GET_API_DATA ( moonset, string_tag )
+            f_.at ( "date_epoch" ).get_to ( t.time );
+            ++i;
+        }
     }
+    d_.update_time = time;
 }

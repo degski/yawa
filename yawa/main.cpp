@@ -100,18 +100,18 @@ int main ( ) {
         // json fa = forcast_load_apixu ( "Denver", "CO United States" );
         // std::cout << fa.dump ( g_indent ) << nl;
 
-        json fd = forcast_query_darksky ( "Los Angeles", "United States" );
+        json fd = forcast_load_darksky ( "Los Angeles", "United States" );
         std::cout << fd.dump ( g_indent ) << nl;
 
         DisplayDataDarksky ddc = fd;
 
-        // DisplayDataApixuDaily ddad = fa;
+        // DisplayDataApixu dda = fa;
 
         std::cout << ddc.hourly[ 0 ].humidity << nl;
         std::cout << ddc.time.timezone << nl;
         std::cout << ddc.current.apparentTemperature << nl;
 
-        // std::cout << ddad[ 2 ].sunrise << nl;
+        // std::cout << ddad.daily[ 2 ].sunrise << nl;
 
         /*
         while ( app.is_active ( ) ) {

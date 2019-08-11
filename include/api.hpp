@@ -102,6 +102,10 @@ struct DisplayDataDarksky {
     DisplayDataDarkskyDaily daily;
     DisplayDataDarkskyHourly hourly;
     DisplayDataDarkskyLocalTime time;
+    std::time_t update_time;
+
+    [[nodiscard]] bool is_stale ( ) noexcept { return ( std::time ( nullptr ) - update_time ) > 3'600u; }
+    [[nodiscard]] bool is_updated ( ) noexcept { return not is_stale ( ); }
 };
 
 struct DisplayDataApixuDay {
@@ -112,5 +116,13 @@ struct DisplayDataApixuDay {
 
 using DisplayDataApixuDaily = std::array<DisplayDataApixuDay, 7>;
 
+struct DisplayDataApixu {
+    DisplayDataApixuDaily daily;
+    std::time_t update_time;
+
+    [[nodiscard]] bool is_stale ( ) noexcept { return ( std::time ( nullptr ) - update_time ) > ( 3'600u * 24 ); }
+    [[nodiscard]] bool is_updated ( ) noexcept { return not is_stale ( ); }
+};
+
 void from_json ( json const & j_, DisplayDataDarksky & d_ );
-void from_json ( json const & j_, DisplayDataApixuDaily & d_ );
+void from_json ( json const & j_, DisplayDataApixu & d_ );
