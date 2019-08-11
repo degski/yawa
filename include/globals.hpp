@@ -43,7 +43,7 @@ namespace fs = std::filesystem;
 #include <cereal/types/string.hpp>
 */
 
-#include <fmt/format.h>
+#include <fmt/core.h>
 
 #include <nlohmann/json.hpp>
 

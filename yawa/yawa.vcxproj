@@ -223,6 +223,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="api.cpp" />
     <ClCompile Include="app.cpp" />
     <ClCompile Include="geo.cpp" />
     <ClCompile Include="globals.cpp" />
@@ -230,6 +231,7 @@
     <ClCompile Include="weather.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\api.hpp" />
     <ClInclude Include="..\include\app.hpp" />
     <ClInclude Include="..\include\geo.hpp" />
     <ClInclude Include="..\include\globals.hpp" />
