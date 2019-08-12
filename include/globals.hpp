@@ -56,13 +56,41 @@ namespace fs = std::filesystem;
 #        pragma comment( lib, "zlibd.lib" )
 #        pragma comment( lib, "libcurl-d.lib" )
 #        pragma comment( lib, "fmtd.lib" )
+#        pragma comment( lib, "cpprest_2_10d.lib" )
 #    else
 #        pragma comment( lib, "zlib.lib" )
 #        pragma comment( lib, "libcurl.lib" )
 #        pragma comment( lib, "fmt.lib" )
+#        pragma comment( lib, "cpprest_2_10.lib" )
 #    endif
 #    pragma comment( lib, "libcurlpp.lib" )
 #    pragma comment( lib, "tz.lib" )
+#endif
+
+#if _WIN32
+#    pragma comment( lib, "Bcrypt.lib" )
+#    pragma comment( lib, "Winhttp.lib" )
+#    pragma comment( lib, "Crypt32.lib" )
+#    pragma comment( lib, "ssleay32.lib" )
+#    pragma comment( lib, "libeay32.lib" )
+#    pragma comment( lib, "brotlicommon-static.lib" )
+#    pragma comment( lib, "brotlidec-static.lib" )
+#    pragma comment( lib, "brotlienc-static.lib" )
+#    if defined( _DEBUG )
+#        pragma comment( lib, "zlibd.lib" )
+#        pragma comment( lib, "boost_system-vc140-mt-gd.lib" )
+#        pragma comment( lib, "boost_date_time-vc140-mt-gd.lib" )
+#        pragma comment( lib, "boost_thread-vc140-mt-gd.lib" )
+#        pragma comment( lib, "boost_regex-vc140-mt-gd.lib" )
+#        pragma comment( lib, "cpprest_2_10d.lib" )
+#    else
+#        pragma comment( lib, "zlib.lib" )
+#        pragma comment( lib, "boost_system-vc140-mt.lib" )
+#        pragma comment( lib, "boost_date_time-vc140-mt.lib" )
+#        pragma comment( lib, "boost_thread-vc140-mt.lib" )
+#        pragma comment( lib, "boost_regex-vc140-mt.lib" )
+#        pragma comment( lib, "cpprest_2_10.lib" )
+#    endif
 #endif
 
 // for convenience

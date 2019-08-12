@@ -92,6 +92,7 @@ json forcast_load_darksky ( std::string const & name_, std::string const & count
     return forcast_load_darksky ( place_data ( name_, country_ ) );
 }
 
+/*
 json forcast_darksky ( std::string const & name_, std::string const & country_ ) {
     auto const & pd     = place_data ( name_, country_ );
     fs::path const file = g_app_data_path / ( "darksky_" + pd.place_country + ".json" );
@@ -101,8 +102,9 @@ json forcast_darksky ( std::string const & name_, std::string const & country_ )
         i >> forcast;
         i.close ( );
         std::time_t last = forcast.at ( "currently" ).at ( "time" ).get<std::time_t> ( );
-        std::cout << std::asctime ( std::localtime ( &last ) ) << nl;
+        // std::cout << std::asctime ( std::localtime ( &last ) ) << nl;
     }
     else {
     }
 }
+*/

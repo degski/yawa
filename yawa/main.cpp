@@ -90,7 +90,7 @@ void handle_eptr ( std::exception_ptr eptr ) { // Passing by value is ok.
     return sf::Event::KeyPressed == event_.type and sf::Keyboard::Escape == event_.key.code;
 }
 
-int main ( ) {
+int main7978 ( ) {
 
     std::exception_ptr eptr;
 
@@ -193,10 +193,10 @@ class LastWindow {
     static auto window_title ( HWND hWnd_ ) noexcept {
 #if GetWindowTextLength == GetWindowTextLengthW
         std::wstring wt ( GetWindowTextLengthW ( hWnd_ ), 0 );
-        GetWindowTextW ( hWnd_, wt.data ( ), wt.length ( ) );
+        GetWindowTextW ( hWnd_, wt.data ( ), ( int ) wt.length ( ) );
 #else
         std::string wt ( GetWindowTextLengthA ( hWnd_ ), 0 );
-        GetWindowTextA ( hWnd_, wt.data ( ), wt.length ( ) );
+        GetWindowTextA ( hWnd_, wt.data ( ), ( int ) wt.length ( ) );
 #endif
         return wt;
     }
@@ -223,4 +223,52 @@ int main56868 ( ) {
     std::cout << LastWindow::get ( ) << std::endl;
 
     return EXIT_SUCCESS;
+}
+
+#include <cpprest/filestream.h>
+#include <cpprest/http_client.h>
+
+using namespace utility;              // Common utilities like string conversions
+using namespace web;                  // Common features like URIs.
+using namespace web::http;            // Common HTTP functionality
+using namespace web::http::client;    // HTTP client features
+using namespace concurrency::streams; // Asynchronous streams
+
+int main ( int argc, char * argv[] ) {
+    auto fileStream = std::make_shared<ostream> ( );
+
+    // Open stream to output file.
+    pplx::task<void> requestTask = fstream::open_ostream ( U ( "results.html" ) )
+                                       .then ( [=] ( ostream outFile ) {
+                                           *fileStream = outFile;
+
+                                           // Create http_client to send the request.
+                                           http_client client ( U ( "http://www.bing.com/" ) );
+
+                                           // Build request URI and start the request.
+                                           uri_builder builder ( U ( "/search" ) );
+                                           builder.append_query ( U ( "q" ), U ( "cpprestsdk github" ) );
+                                           return client.request ( methods::GET, builder.to_string ( ) );
+                                       } )
+
+                                       // Handle response headers arriving.
+                                       .then ( [=] ( http_response response ) {
+                                           printf ( "Received response status code:%u\n", response.status_code ( ) );
+
+                                           // Write response body into the file.
+                                           return response.body ( ).read_to_end ( fileStream->streambuf ( ) );
+                                       } )
+
+                                       // Close the file stream.
+                                       .then ( [=] ( size_t ) { return fileStream->close ( ); } );
+
+    // Wait for all the outstanding I/O to complete and handle any exceptions
+    try {
+        requestTask.wait ( );
+    }
+    catch ( const std::exception & e ) {
+        printf ( "Error exception:%s\n", e.what ( ) );
+    }
+
+    return 0;
 }

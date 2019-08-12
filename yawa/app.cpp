@@ -43,7 +43,8 @@ App::App ( ) {
     sf::makeWindowSeeThrough ( m_render_window );
     sf::moveWindowBottom ( m_render_window );
 
-    m_render_window_bounds = sf::FloatRect ( 0.0f, 0.0f, m_render_window.getSize ( ).x, m_render_window.getSize ( ).y );
+    m_render_window_bounds = sf::FloatRect ( 0.0f, 0.0f, static_cast<float> ( m_render_window.getSize ( ).x ),
+                                             static_cast<float> ( m_render_window.getSize ( ).y ) );
 
     // Frames.
 
