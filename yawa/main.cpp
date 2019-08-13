@@ -90,7 +90,7 @@ void handle_eptr ( std::exception_ptr eptr ) { // Passing by value is ok.
     return sf::Event::KeyPressed == event_.type and sf::Keyboard::Escape == event_.key.code;
 }
 
-int main7978 ( ) {
+int main ( ) {
 
     std::exception_ptr eptr;
 
@@ -225,6 +225,8 @@ int main56868 ( ) {
     return EXIT_SUCCESS;
 }
 
+#if 0
+
 #include <cpprest/filestream.h>
 #include <cpprest/http_client.h>
 
@@ -234,11 +236,14 @@ using namespace web::http;            // Common HTTP functionality
 using namespace web::http::client;    // HTTP client features
 using namespace concurrency::streams; // Asynchronous streams
 
+// https://www.bing.com/search?q=cpprestsdk+github
+
 int main ( int argc, char * argv[] ) {
     auto fileStream = std::make_shared<ostream> ( );
 
     // Open stream to output file.
     pplx::task<void> requestTask = fstream::open_ostream ( U ( "results.html" ) )
+
                                        .then ( [=] ( ostream outFile ) {
                                            *fileStream = outFile;
 
@@ -272,3 +277,5 @@ int main ( int argc, char * argv[] ) {
 
     return 0;
 }
+
+#endif

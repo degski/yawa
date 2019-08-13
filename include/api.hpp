@@ -32,11 +32,6 @@
 #include <array>
 #include <string>
 
-#include <fmt/core.h>
-
-#include <date/date.h>
-#include <date/tz.h>
-
 #include <nlohmann/json.hpp> //
 
 // for convenience.
@@ -131,5 +126,3 @@ struct DisplayData {
     DisplayDataDarksky darksky;
     DisplayDataApixu apixu;
 };
-
-inline DisplayData data;

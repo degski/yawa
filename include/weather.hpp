@@ -26,8 +26,10 @@
 #include <map>
 #include <string>
 
-#include "api.hpp"
-#include "globals.hpp"
+#include <nlohmann/json.hpp> //
+
+// for convenience.
+using json = nlohmann::json;
 
 // https://api.met.no/weatherapi/weathericon/1.1/documentation
 inline constexpr char const * g_weather_icon[]{ "Empty",

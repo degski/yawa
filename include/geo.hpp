@@ -26,7 +26,10 @@
 #include <map>
 #include <string>
 
-#include "globals.hpp"
+#include <nlohmann/json.hpp>
+
+// for convenience.
+using json = nlohmann::json;
 
 struct location_t {
     std::string lat, lng;
@@ -75,9 +78,6 @@ inline void from_json ( json const & j_, geo_t & r_ ) {
 }
 
 using auth_t = std::map<std::string, std::string>;
-
-inline geo_t g_geo;
-inline auth_t g_auth;
 
 void save_geo ( );
 void load_geo ( );

@@ -29,6 +29,8 @@
 #include <sstream>
 #include <string>
 
+#include "globals.hpp"
+
 #include "geo.hpp"
 
 std::string load_file ( std::string const & filename ) {

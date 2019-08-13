@@ -28,7 +28,7 @@
 #include <sstream>
 #include <string>
 
-#include "geo.hpp"
+#include "globals.hpp"
 
 std::string darksky_forcast_query_string ( location_t const & loc_ ) {
     constexpr char url[] = "https://api.darksky.net/forecast/";

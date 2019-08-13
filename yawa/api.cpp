@@ -30,6 +30,11 @@
 #include <chrono>
 #include <type_traits>
 
+#include <fmt/core.h>
+
+#include <date/date.h>
+#include <date/tz.h>
+
 #include "api.hpp"
 
 #define Q_( x ) #x

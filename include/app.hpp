@@ -29,10 +29,6 @@
 
 #include <curlpp/cURLpp.hpp>
 
-#include "geo.hpp"
-#include "globals.hpp"
-#include "weather.hpp"
-
 #include "resource.h"
 
 struct App {
@@ -68,13 +64,7 @@ struct App {
 
     App ( );
 
-    static inline void init ( ) {
-        if ( fs::exists ( g_geo_path ) )
-            load_geo ( );
-        if ( fs::exists ( g_auth_path ) )
-            load_auth ( );
-    }
-
+    static void init ( );
     void construct_icons_map ( );
 
     inline bool is_active ( ) const noexcept { return m_render_window.isOpen ( ); }

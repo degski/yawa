@@ -25,7 +25,11 @@
 
 #include <SFML/Extensions.hpp>
 
+#include <globals.hpp>
+
 #include "app.hpp"
+
+#include "weather.hpp"
 
 App::App ( ) {
 
@@ -63,6 +67,13 @@ App::App ( ) {
 
     m_render_window.clear ( sf::Color::Transparent );
     m_render_window.display ( );
+}
+
+void App::init ( ) {
+    if ( fs::exists ( g_geo_path ) )
+        load_geo ( );
+    if ( fs::exists ( g_auth_path ) )
+        load_auth ( );
 }
 
 void App::construct_icons_map ( ) {

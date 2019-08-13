@@ -45,7 +45,9 @@ namespace fs = std::filesystem;
 
 #include <fmt/core.h>
 
-#include <nlohmann/json.hpp>
+#include "geo.hpp"
+
+#include "api.hpp"
 
 #if _WIN32
 #    pragma comment( lib, "ws2_32.lib" )
@@ -67,6 +69,7 @@ namespace fs = std::filesystem;
 #    pragma comment( lib, "tz.lib" )
 #endif
 
+#if 0
 #if _WIN32
 #    pragma comment( lib, "Bcrypt.lib" )
 #    pragma comment( lib, "Winhttp.lib" )
@@ -92,9 +95,7 @@ namespace fs = std::filesystem;
 #        pragma comment( lib, "cpprest_2_10.lib" )
 #    endif
 #endif
-
-// for convenience
-using json = nlohmann::json;
+#endif
 
 [[nodiscard]] fs::path appDataPath ( std::string && place_ ) noexcept;
 [[nodiscard]] fs::path getExePath ( ) noexcept;
@@ -106,6 +107,11 @@ inline fs::path const g_geo_path  = g_app_data_path / "places.json";
 inline fs::path const g_auth_path = g_app_data_path / "keys.json";
 
 inline constexpr int g_indent = 4;
+
+inline geo_t g_geo;
+inline auth_t g_auth;
+
+inline DisplayData data;
 
 inline bool is_read ( char const file_[] ) noexcept {
     return ( fs::status ( file_ ).permissions ( ) & fs::perms::owner_read ) != fs::perms::none;
