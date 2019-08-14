@@ -27,6 +27,7 @@
 #include <cstdlib>
 #include <ctime>
 
+#include <charconv>
 #include <chrono>
 #include <type_traits>
 
@@ -109,36 +110,20 @@ typename std::enable_if<std::is_same<Tag, time_tag>::value>::type convert ( json
 }
 
 
-std::string to_24 ( std::string && am_ ) {
+void to_24 ( std::string & am_ ) {
     if ( am_[ 6 ] == 'P' ) {
-        char * end = am_.data ( ) + 2;
-        switch ( std::strtoul ( am_.c_str ( ), &end, 10 ) ) {
-            case  0: return std::string ( "12:" ) + am_.substr ( 3, 2 );
-            case  1: return std::string ( "13:" ) + am_.substr ( 3, 2 );
-            case  2: return std::string ( "14:" ) + am_.substr ( 3, 2 );
-            case  3: return std::string ( "15:" ) + am_.substr ( 3, 2 );
-            case  4: return std::string ( "16:" ) + am_.substr ( 3, 2 );
-            case  5: return std::string ( "17:" ) + am_.substr ( 3, 2 );
-            case  6: return std::string ( "18:" ) + am_.substr ( 3, 2 );
-            case  7: return std::string ( "19:" ) + am_.substr ( 3, 2 );
-            case  8: return std::string ( "20:" ) + am_.substr ( 3, 2 );
-            case  9: return std::string ( "21:" ) + am_.substr ( 3, 2 );
-            case 10: return std::string ( "22:" ) + am_.substr ( 3, 2 );
-            case 11: return std::string ( "23:" ) + am_.substr ( 3, 2 );
-        }
+        int hour;
+        std::from_chars ( am_.data ( ), am_.data ( ) + 2, hour );
+        std::to_chars ( am_.data ( ), am_.data ( ) + 2, hour + 12 );
     }
-    else {
-        am_.resize ( 5 );
-        return am_;
-    }
+    am_.resize ( 5 );
 }
 
 template<typename Tag, typename T>
 typename std::enable_if<std::is_same<Tag, ampm_tag>::value>::type convert ( json const & f, char const param[], T & t ) {
     if ( f.count ( param ) ) {
-        std::string ampm;
-        f.at ( param ).get_to ( ampm );
-        t = to_24 ( std::move ( ampm ) );
+        f.at ( param ).get_to ( t );
+        to_24 ( t );
     }
 }
 
