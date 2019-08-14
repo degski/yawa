@@ -118,8 +118,8 @@ void add_12 ( T * const b, T * const e ) noexcept {
 }
 
 void to_24 ( std::string & am_ ) noexcept {
-    if ( am_[ 7 ] == 'M' ) {
-        if ( am_[ 6 ] == 'P' )
+    if ( 'M' == am_[ 7 ] ) {
+        if ( 'P' == am_[ 6 ] )
             add_12 ( am_.data ( ), am_.data ( ) + 2 );
         am_.resize ( 5 );
     }
