@@ -106,6 +106,9 @@ int main ( ) {
         std::cout << g_data.darksky.time.offset << nl;
 
         std::cout << g_data.apixu.daily[ 2 ].sunrise << nl;
+        std::cout << g_data.apixu.daily[ 2 ].sunset << nl;
+        std::cout << g_data.apixu.daily[ 2 ].moonrise << nl;
+        std::cout << g_data.apixu.daily[ 2 ].moonset << nl;
 
         /*
         while ( app.is_active ( ) ) {
