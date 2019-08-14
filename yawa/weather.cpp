@@ -96,8 +96,10 @@ void forcast ( ) {
         else
             g_data.apixu = forcast_query_apixu ( current_place, apixu_file );
     }
-    if ( g_data.apixu.is_stale ( ) )
-        g_data.apixu = forcast_query_apixu ( current_place, apixu_file );
-    // normalize apixu times to UTC.
     g_data.normalize_times ( );
+    if ( g_data.apixu.is_stale ( ) ) {
+        g_data.apixu = forcast_query_apixu ( current_place, apixu_file );
+        // normalize apixu times to UTC.
+        g_data.normalize_times ( );
+    }
 }
