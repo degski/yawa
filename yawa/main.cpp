@@ -97,22 +97,15 @@ int main ( ) {
     App app;
 
     try {
-        // json fa = forcast_load_apixu ( "Denver", "CO United States" );
-        // std::cout << fa.dump ( g_indent ) << nl;
 
-        json fd = forcast_load_darksky ( "Los Angeles", "United States" );
-        std::cout << fd.dump ( g_indent ) << nl;
-        json fa = forcast_load_apixu ( "Los Angeles", "United States" );
-        std::cout << fa.dump ( g_indent ) << nl;
+        forcast ( );
 
-        data.darksky = fd;
-        data.apixu   = fa;
+        std::cout << g_data.darksky.hourly[ 0 ].humidity << nl;
+        std::cout << g_data.darksky.time.timezone << nl;
+        std::cout << g_data.darksky.current.apparentTemperature << nl;
+        std::cout << g_data.darksky.time.offset << nl;
 
-        std::cout << data.darksky.hourly[ 0 ].humidity << nl;
-        std::cout << data.darksky.time.timezone << nl;
-        std::cout << data.darksky.current.apparentTemperature << nl;
-
-        // std::cout << ddad.daily[ 2 ].sunrise << nl;
+        std::cout << g_data.apixu.daily[ 2 ].sunrise << nl;
 
         /*
         while ( app.is_active ( ) ) {
@@ -227,8 +220,8 @@ int main56868 ( ) {
 
 #if 0
 
-#include <cpprest/filestream.h>
-#include <cpprest/http_client.h>
+#    include <cpprest/filestream.h>
+#    include <cpprest/http_client.h>
 
 using namespace utility;              // Common utilities like string conversions
 using namespace web;                  // Common features like URIs.

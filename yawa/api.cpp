@@ -209,7 +209,7 @@ void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
         GET_API_DATA ( offset, time_tag )
         t.offset *= 3'600;
         GET_API_DATA ( timezone, string_tag )
-        t.offset = date::make_zoned ( d_.time.timezone, std::chrono::system_clock::now ( ) ).get_info ( ).offset.count ( ) / 3'600;
+        // t.offset = date::make_zoned ( d_.time.timezone, std::chrono::system_clock::now ( ) ).get_info ( ).offset.count ( );
     }
     d_.update_time = d_.current.time;
 }
@@ -228,5 +228,5 @@ void from_json ( json const & j_, DisplayDataApixu & d_ ) {
             ++i;
         }
     }
-    d_.update_local_time = j_.at ( "location" ).at ( "localtime_epoch" ).get<std::time_t> ( );
+    d_.update_time = j_.at ( "location" ).at ( "localtime_epoch" ).get<std::time_t> ( );
 }

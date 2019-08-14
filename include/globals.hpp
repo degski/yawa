@@ -111,7 +111,7 @@ inline constexpr int g_indent = 4;
 inline geo_t g_geo;
 inline auth_t g_auth;
 
-inline DisplayData data;
+inline DisplayData g_data;
 
 inline bool is_read ( char const file_[] ) noexcept {
     return ( fs::status ( file_ ).permissions ( ) & fs::perms::owner_read ) != fs::perms::none;

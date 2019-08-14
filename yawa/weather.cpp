@@ -42,69 +42,62 @@ std::string apixu_forcast_query_string ( location_t const & loc_ ) {
     return { url + g_auth[ "apixu" ] + "&q=" + loc_.lat + "," + loc_.lng + tag };
 }
 
-json forcast_query_apixu ( place_t const & pd_ ) {
+json forcast_query_apixu ( place_t const & pd_, fs::path const & file_ ) {
     json const forcast = query_url ( apixu_forcast_query_string ( pd_.location ) );
-    std::ofstream o ( g_app_data_path / ( "apixu_" + pd_.place_country + ".json" ) );
+    std::ofstream o ( file_ );
     o << forcast.dump ( g_indent ) << std::endl;
     o.flush ( );
     o.close ( );
     return forcast;
 }
 
-json forcast_query_apixu ( std::string const & name_, std::string const & country_ ) {
-    return forcast_query_apixu ( place_data ( name_, country_ ) );
-}
-
-json forcast_query_darksky ( place_t const & pd_ ) {
+json forcast_query_darksky ( place_t const & pd_, fs::path const & file_ ) {
     json const forcast = query_url ( darksky_forcast_query_string ( pd_.location ) );
-    std::ofstream o ( g_app_data_path / ( "darksky_" + pd_.place_country + ".json" ) );
+    std::ofstream o ( file_ );
     o << forcast.dump ( g_indent ) << std::endl;
     o.flush ( );
     o.close ( );
     return forcast;
 }
 
-json forcast_query_darksky ( std::string const & name_, std::string const & country_ ) {
-    return forcast_query_darksky ( place_data ( name_, country_ ) );
-}
-
-json forcast_load_apixu ( place_t const & pd_ ) {
+json forcast_load_apixu ( fs::path const & file_ ) {
     json forcast;
-    std::ifstream i ( g_app_data_path / ( "apixu_" + pd_.place_country + ".json" ) );
+    std::ifstream i ( file_ );
     i >> forcast;
     i.close ( );
     return forcast;
 }
 
-json forcast_load_apixu ( std::string const & name_, std::string const & country_ ) {
-    return forcast_load_apixu ( place_data ( name_, country_ ) );
-}
-
-json forcast_load_darksky ( place_t const & pd_ ) {
+json forcast_load_darksky ( fs::path const & file_ ) {
     json forcast;
-    std::ifstream i ( g_app_data_path / ( "darksky_" + pd_.place_country + ".json" ) );
+    std::ifstream i ( file_ );
     i >> forcast;
     i.close ( );
     return forcast;
 }
 
-json forcast_load_darksky ( std::string const & name_, std::string const & country_ ) {
-    return forcast_load_darksky ( place_data ( name_, country_ ) );
-}
-
-/*
-json forcast_darksky ( std::string const & name_, std::string const & country_ ) {
-    auto const & pd     = place_data ( name_, country_ );
-    fs::path const file = g_app_data_path / ( "darksky_" + pd.place_country + ".json" );
-    if ( fs::exists ( file ) ) {
-        json forcast;
-        std::ifstream i ( file );
-        i >> forcast;
-        i.close ( );
-        std::time_t last = forcast.at ( "currently" ).at ( "time" ).get<std::time_t> ( );
-        // std::cout << std::asctime ( std::localtime ( &last ) ) << nl;
+void forcast ( ) {
+    auto const & current_place = g_geo.places[ g_geo.current ];
+    // darksky.
+    fs::path const darksky_file = g_app_data_path / ( "darksky_" + current_place.place_country + ".json" );
+    if ( not g_data.darksky.update_time ) {
+        if ( fs::exists ( darksky_file ) )
+            g_data.darksky = forcast_load_darksky ( darksky_file );
+        else
+            g_data.darksky = forcast_query_darksky ( current_place, darksky_file );
     }
-    else {
+    if ( g_data.darksky.is_stale ( ) )
+        g_data.darksky = forcast_query_darksky ( current_place, darksky_file );
+    // apixu.
+    fs::path const apixu_file = g_app_data_path / ( "apixu_" + current_place.place_country + ".json" );
+    if ( not g_data.apixu.update_time ) {
+        if ( fs::exists ( apixu_file ) )
+            g_data.apixu = forcast_load_apixu ( apixu_file );
+        else
+            g_data.apixu = forcast_query_apixu ( current_place, apixu_file );
     }
+    if ( g_data.apixu.is_stale ( ) )
+        g_data.apixu = forcast_query_apixu ( current_place, apixu_file );
+    // normalize apixu times to UTC.
+    g_data.normalize_times ( );
 }
-*/
