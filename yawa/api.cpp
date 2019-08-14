@@ -109,10 +109,12 @@ typename std::enable_if<std::is_same<Tag, time_tag>::value>::type convert ( json
         f.at ( param ).get_to ( t );
 }
 
-void add_12 ( char * b, char * e ) noexcept {
+template<typename T>
+void add_12 ( T * const b, T * const e ) noexcept {
     int hour;
     std::from_chars ( b, e, hour );
-    std::to_chars ( b, e, hour + 12 );
+    hour += 12;
+    std::to_chars ( b, e, hour );
 }
 
 void to_24 ( std::string & am_ ) noexcept {
