@@ -110,12 +110,14 @@ typename std::enable_if<std::is_same<Tag, time_tag>::value>::type convert ( json
 }
 
 void to_24 ( std::string & am_ ) noexcept {
-    if ( am_[ 6 ] == 'P' ) {
-        int hour;
-        std::from_chars ( am_.data ( ), am_.data ( ) + 2, hour );
-        std::to_chars ( am_.data ( ), am_.data ( ) + 2, hour + 12 );
+    if ( am_[ 7 ] == 'M' ) {
+        if ( am_[ 6 ] == 'P' ) {
+            int hour;
+            std::from_chars ( am_.data ( ), am_.data ( ) + 2, hour );
+            std::to_chars ( am_.data ( ), am_.data ( ) + 2, hour + 12 );
+        }
+        am_.resize ( 5 );
     }
-    am_.resize ( 5 );
 }
 
 template<typename Tag, typename T>
