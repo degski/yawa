@@ -30,6 +30,8 @@
 #include <ctime>
 
 #include <array>
+#include <iomanip>
+#include <iostream>
 #include <string>
 
 #include <nlohmann/json.hpp> //
@@ -129,6 +131,8 @@ struct DisplayData {
     void normalize_times ( ) noexcept {
         for ( auto & d : apixu.daily )
             d.time -= darksky.time.offset;
-        apixu.update_time -= darksky.time.offset;
     }
 };
+
+
+inline void print_time_ ( std::time_t & t_ ) noexcept { std::cout << std::put_time ( std::gmtime ( &t_ ), "%c %R" ); }

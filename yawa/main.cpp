@@ -90,6 +90,14 @@ void handle_eptr ( std::exception_ptr eptr ) { // Passing by value is ok.
     return sf::Event::KeyPressed == event_.type and sf::Keyboard::Escape == event_.key.code;
 }
 
+
+std::string print_time ( std::time_t const & t_ ) noexcept {
+    std::tm * now_tm = std::gmtime ( &t_ );
+    char buf[ 42 ];
+    std::strftime ( buf, 42, "%Y%m%d %X", now_tm );
+    return buf;
+}
+
 int main ( ) {
 
     std::exception_ptr eptr;
@@ -100,15 +108,20 @@ int main ( ) {
 
         forcast ( );
 
-        std::cout << g_data.darksky.hourly[ 0 ].humidity << nl;
-        std::cout << g_data.darksky.time.timezone << nl;
-        std::cout << g_data.darksky.current.apparentTemperature << nl;
-        std::cout << g_data.darksky.time.offset << nl;
+        std::cout << "Current Time UTC " << print_time ( std::time ( nullptr ) ) << nl;
 
-        std::cout << g_data.apixu.daily[ 2 ].sunrise << nl;
-        std::cout << g_data.apixu.daily[ 2 ].sunset << nl;
-        std::cout << g_data.apixu.daily[ 2 ].moonrise << nl;
-        std::cout << g_data.apixu.daily[ 2 ].moonset << nl;
+        std::cout << "D " << print_time ( g_data.darksky.update_time ) << nl;
+        std::cout << "A " << print_time ( g_data.apixu.update_time ) << nl;
+
+        std::cout << print_time ( g_data.darksky.daily[ 0 ].time - 25'200u ) << nl;
+        std::cout << print_time ( g_data.darksky.daily[ 1 ].time - 25'200u ) << nl;
+        std::cout << print_time ( g_data.darksky.daily[ 2 ].time - 25'200u ) << nl;
+        std::cout << print_time ( g_data.darksky.daily[ 3 ].time - 25'200u ) << nl;
+        std::cout << print_time ( g_data.darksky.daily[ 4 ].time - 25'200u ) << nl;
+        std::cout << print_time ( g_data.darksky.daily[ 5 ].time - 25'200u ) << nl;
+        std::cout << print_time ( g_data.darksky.daily[ 6 ].time - 25'200u ) << nl;
+        std::cout << print_time ( g_data.darksky.daily[ 7 ].time - 25'200u ) << nl;
+
 
         /*
         while ( app.is_active ( ) ) {

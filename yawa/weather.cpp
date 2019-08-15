@@ -32,7 +32,7 @@
 
 std::string darksky_forcast_query_string ( location_t const & loc_ ) {
     constexpr char url[] = "https://api.darksky.net/forecast/";
-    constexpr char tag[] = "?units=si&extend=hourly";
+    constexpr char tag[] = "?units=ca&extend=hourly";
     return { url + g_auth[ "darksky" ] + "/" + loc_.lat + "," + loc_.lng + tag };
 }
 

@@ -64,7 +64,6 @@ typename std::enable_if<std::is_same<Tag, kmh_tag>::value>::type convert ( json 
     if ( f.count ( param ) ) {
         float number = 0.0f;
         f.at ( param ).get_to ( number );
-        number *= 3.6f;
         t = fmt::format ( "{0:.1f}", number );
     }
 }
