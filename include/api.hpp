@@ -129,8 +129,8 @@ struct DisplayData {
     DisplayDataApixu apixu;
 
     void normalize_times ( ) noexcept {
-        for ( auto & d : apixu.daily )
-            d.time -= darksky.time.offset;
+       // for ( auto & d : apixu.daily )
+        //    d.time -= darksky.time.offset;
     }
 };
 

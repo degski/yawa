@@ -33,6 +33,13 @@
 
 #include "geo.hpp"
 
+// Date has to be in format '2019-08-16'.
+std::string ipgeolocation_query_string ( location_t const & loc_, std::string const & date_ ) {
+    constexpr char url[] = "https://api.ipgeolocation.io/astronomy?apiKey=";
+    return { url + g_auth[ "ipgeolocation" ] + "&lat=" + loc_.lat + "&long=" + loc_.lng + "&date=" + date_ };
+}
+
+
 std::string load_file ( std::string const & filename ) {
     std::string str;
     if ( std::ifstream is{ filename, std::ios::ate } ) {

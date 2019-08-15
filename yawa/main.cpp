@@ -110,17 +110,34 @@ int main ( ) {
 
         std::cout << "Current Time UTC " << print_time ( std::time ( nullptr ) ) << nl;
 
+        std::cout << nl;
+
         std::cout << "D " << print_time ( g_data.darksky.update_time ) << nl;
         std::cout << "A " << print_time ( g_data.apixu.update_time ) << nl;
 
-        std::cout << print_time ( g_data.darksky.daily[ 0 ].time - 25'200u ) << nl;
-        std::cout << print_time ( g_data.darksky.daily[ 1 ].time - 25'200u ) << nl;
-        std::cout << print_time ( g_data.darksky.daily[ 2 ].time - 25'200u ) << nl;
-        std::cout << print_time ( g_data.darksky.daily[ 3 ].time - 25'200u ) << nl;
-        std::cout << print_time ( g_data.darksky.daily[ 4 ].time - 25'200u ) << nl;
-        std::cout << print_time ( g_data.darksky.daily[ 5 ].time - 25'200u ) << nl;
-        std::cout << print_time ( g_data.darksky.daily[ 6 ].time - 25'200u ) << nl;
-        std::cout << print_time ( g_data.darksky.daily[ 7 ].time - 25'200u ) << nl;
+        std::cout << nl;
+
+        int i = 0;
+
+        for ( auto & d : g_data.darksky.daily ) {
+            std::cout << i++ << ' ' << print_time ( d.time ) << nl;
+        }
+
+        std::cout << nl;
+
+        i = 0;
+        for ( auto & h : g_data.darksky.hourly ) {
+            std::cout << i++ << ' ' << print_time ( h.time ) << nl;
+        }
+
+        std::cout << nl;
+
+        i = 0;
+
+        for ( auto & d : g_data.apixu.daily ) {
+            std::cout << i++ << ' ' << print_time ( d.time ) << nl;
+        }
+        std::cout << nl;
 
 
         /*
