@@ -90,12 +90,52 @@ void handle_eptr ( std::exception_ptr eptr ) { // Passing by value is ok.
     return sf::Event::KeyPressed == event_.type and sf::Keyboard::Escape == event_.key.code;
 }
 
-
 std::string print_time ( std::time_t const & t_ ) noexcept {
     std::tm * now_tm = std::gmtime ( &t_ );
     char buf[ 42 ];
     std::strftime ( buf, 42, "%Y%m%d %X", now_tm );
     return buf;
+}
+
+void easter_julian ( int year ) {
+
+    int a  = year % 4;
+    int b  = year % 7;
+    int c  = year % 19;
+    int d  = ( 19 * c + 15 ) % 30;
+    int e  = ( 2 * a + 4 * b - d + 34 ) % 7;
+    int t1 = d + e + 114;
+    int f  = t1 / 31;
+    int g  = t1 % 31 + 1;
+
+    std::cout << f << ' ' << g << nl;
+}
+
+// Valid from 1583.
+void easter_gregorian ( int year ) {
+
+    int a  = year % 19;
+    int b  = year / 100;
+    int c  = year % 100;
+    int d  = b / 4;
+    int e  = b % 4;
+    int t1 = b + 8;
+    int f  = t1 / 25;
+    int t2 = b - f + 1;
+    int g  = t2 / 3;
+    int t3 = 19 * a + b - d - g + 15;
+    int h  = t3 % 30;
+    int i  = c / 4;
+    int k  = c % 4;
+    int t4 = 32 + 2 * e + 2 * i - h - k;
+    int l  = t4 % 7;
+    int t5 = a + 11 * h + 22 * l;
+    int m  = t5 / 451;
+    int t6 = h + l - 7 * m + 114;
+    int n  = t6 / 31;
+    int p  = t6 % 31 + 1;
+
+    std::cout << n << ' ' << p << nl;
 }
 
 int main ( ) {
@@ -138,7 +178,6 @@ int main ( ) {
             std::cout << i++ << ' ' << print_time ( d.time ) << nl;
         }
         std::cout << nl;
-
 
         /*
         while ( app.is_active ( ) ) {

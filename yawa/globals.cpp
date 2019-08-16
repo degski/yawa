@@ -106,6 +106,42 @@ std::string get_timestamp ( ) noexcept {
     return s;
 }
 
+// 2019-08-17 to epoch.
+std::time_t date_to_epoch ( std::string const & d_ ) noexcept {
+    std::tm tm = {};
+    std::from_chars ( d_.data ( ), d_.data ( ) + 4, tm.tm_year );
+    tm.tm_year -= 1'900;
+    std::from_chars ( d_.data ( ) + 5, d_.data ( ) + 7, tm.tm_mon );
+    tm.tm_mon -= 1;
+    std::from_chars ( d_.data ( ) + 8, d_.data ( ) + 10, tm.tm_mday );
+    tm.tm_isdst = -1;
+    int offset  = local_utc_offset_minutes ( );
+    tm.tm_hour  = offset / 60;
+    tm.tm_min   = offset % 60;
+    return std::mktime ( &tm );
+}
+
+// https://stackoverflow.com/a/32433990/646940
+
+int local_utc_offset_minutes ( ) noexcept {
+    std::time_t t = std::time ( nullptr );
+    std::tm * loc = std::localtime ( &t );
+    // save values because they could be erased by the call to gmtime.
+    int loc_min   = loc->tm_min;
+    int loc_hour  = loc->tm_hour;
+    int loc_day   = loc->tm_mday;
+    std::tm * utc = std::gmtime ( &t );
+    int delta_min = loc_min - utc->tm_min;
+    int delta_day = loc_day - utc->tm_mday;
+    delta_min += ( loc_hour - utc->tm_hour ) * 60;
+    // hack for the day because the difference actually is only 0, 1 or -1.
+    if ( ( delta_day == 1 ) or ( delta_day < -1 ) )
+        delta_min += 1'440;
+    else if ( ( delta_day == -1 ) or ( delta_day > 1 ) )
+        delta_min -= 1'440;
+    return delta_min;
+}
+
 json query_url ( std::string const & url_ ) {
     std::stringstream ss;
     try {

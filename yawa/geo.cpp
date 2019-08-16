@@ -21,6 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <charconv>
 #include <filesystem>
 #include <fstream>
 #include <limits>
@@ -34,11 +35,15 @@
 #include "geo.hpp"
 
 // Date has to be in format '2019-08-16'.
-std::string ipgeolocation_query_string ( location_t const & loc_, std::string const & date_ ) {
+std::string ipgeolocation_astronomy_query_string ( location_t const & loc_, std::string const & date_ ) {
     constexpr char url[] = "https://api.ipgeolocation.io/astronomy?apiKey=";
     return { url + g_auth[ "ipgeolocation" ] + "&lat=" + loc_.lat + "&long=" + loc_.lng + "&date=" + date_ };
 }
 
+std::string ipgeolocation_timezone_query_string ( location_t const & loc_ ) {
+    constexpr char url[] = "https://api.ipgeolocation.io/timezone?apiKey=";
+    return { url + g_auth[ "ipgeolocation" ] + "&lat=" + loc_.lat + "&long=" + loc_.lng };
+}
 
 std::string load_file ( std::string const & filename ) {
     std::string str;
@@ -147,3 +152,28 @@ place_t const & place_data ( std::string const & place_, std::string const & cou
     else
         return it->second;
 }
+
+/*
+
+{
+  "location": {
+    "latitude": 39.79222,
+    "longitude": 19.81449
+  },
+  "date": "2019-08-17",
+  "sunrise": "06:54",
+  "sunset": "20:35",
+  "solar_noon": "13:45",
+  "day_length": "13:41",
+  "sun_altitude": -33.85443500329109,
+  "sun_distance": 151491900.79337415,
+  "sun_azimuth": 22.097752758545425,
+  "moonrise": "21:54",
+  "moonset": "08:25",
+  "moon_altitude": 38.54675424071512,
+  "moon_distance": 405896.39789071336,
+  "moon_azimuth": 182.30506383152255,
+  "moon_parallactic_angle": 13.822913692056744
+}
+
+*/

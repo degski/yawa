@@ -70,31 +70,31 @@ namespace fs = std::filesystem;
 #endif
 
 #if 0
-#if _WIN32
-#    pragma comment( lib, "Bcrypt.lib" )
-#    pragma comment( lib, "Winhttp.lib" )
-#    pragma comment( lib, "Crypt32.lib" )
-#    pragma comment( lib, "ssleay32.lib" )
-#    pragma comment( lib, "libeay32.lib" )
-#    pragma comment( lib, "brotlicommon-static.lib" )
-#    pragma comment( lib, "brotlidec-static.lib" )
-#    pragma comment( lib, "brotlienc-static.lib" )
-#    if defined( _DEBUG )
-#        pragma comment( lib, "zlibd.lib" )
-#        pragma comment( lib, "boost_system-vc140-mt-gd.lib" )
-#        pragma comment( lib, "boost_date_time-vc140-mt-gd.lib" )
-#        pragma comment( lib, "boost_thread-vc140-mt-gd.lib" )
-#        pragma comment( lib, "boost_regex-vc140-mt-gd.lib" )
-#        pragma comment( lib, "cpprest_2_10d.lib" )
-#    else
-#        pragma comment( lib, "zlib.lib" )
-#        pragma comment( lib, "boost_system-vc140-mt.lib" )
-#        pragma comment( lib, "boost_date_time-vc140-mt.lib" )
-#        pragma comment( lib, "boost_thread-vc140-mt.lib" )
-#        pragma comment( lib, "boost_regex-vc140-mt.lib" )
-#        pragma comment( lib, "cpprest_2_10.lib" )
+#    if _WIN32
+#        pragma comment( lib, "Bcrypt.lib" )
+#        pragma comment( lib, "Winhttp.lib" )
+#        pragma comment( lib, "Crypt32.lib" )
+#        pragma comment( lib, "ssleay32.lib" )
+#        pragma comment( lib, "libeay32.lib" )
+#        pragma comment( lib, "brotlicommon-static.lib" )
+#        pragma comment( lib, "brotlidec-static.lib" )
+#        pragma comment( lib, "brotlienc-static.lib" )
+#        if defined( _DEBUG )
+#            pragma comment( lib, "zlibd.lib" )
+#            pragma comment( lib, "boost_system-vc140-mt-gd.lib" )
+#            pragma comment( lib, "boost_date_time-vc140-mt-gd.lib" )
+#            pragma comment( lib, "boost_thread-vc140-mt-gd.lib" )
+#            pragma comment( lib, "boost_regex-vc140-mt-gd.lib" )
+#            pragma comment( lib, "cpprest_2_10d.lib" )
+#        else
+#            pragma comment( lib, "zlib.lib" )
+#            pragma comment( lib, "boost_system-vc140-mt.lib" )
+#            pragma comment( lib, "boost_date_time-vc140-mt.lib" )
+#            pragma comment( lib, "boost_thread-vc140-mt.lib" )
+#            pragma comment( lib, "boost_regex-vc140-mt.lib" )
+#            pragma comment( lib, "cpprest_2_10.lib" )
+#        endif
 #    endif
-#endif
 #endif
 
 [[nodiscard]] fs::path appDataPath ( std::string && place_ ) noexcept;
@@ -249,6 +249,9 @@ json query_url ( std::string const & url_ );
 [[nodiscard]] std::string get_timestamp_hours_iso8601 ( ) noexcept;
 [[nodiscard]] std::string get_timestamp_utc_iso8601 ( ) noexcept;
 [[nodiscard]] std::string get_timestamp_hours_utc_iso8601 ( ) noexcept;
+
+[[nodiscard]] std::time_t date_to_epoch ( std::string const & d_ ) noexcept;
+[[nodiscard]] int local_utc_offset_minutes ( ) noexcept;
 
 std::string get_timestamp ( ) noexcept;
 
