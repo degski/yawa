@@ -32,6 +32,8 @@
 
 #include "globals.hpp"
 
+#include "api.hpp"
+
 #include "geo.hpp"
 
 // Date has to be in format '2019-08-16'.
@@ -153,27 +155,21 @@ place_t const & place_data ( std::string const & place_, std::string const & cou
         return it->second;
 }
 
-/*
-
-{
-  "location": {
-    "latitude": 39.79222,
-    "longitude": 19.81449
-  },
-  "date": "2019-08-17",
-  "sunrise": "06:54",
-  "sunset": "20:35",
-  "solar_noon": "13:45",
-  "day_length": "13:41",
-  "sun_altitude": -33.85443500329109,
-  "sun_distance": 151491900.79337415,
-  "sun_azimuth": 22.097752758545425,
-  "moonrise": "21:54",
-  "moonset": "08:25",
-  "moon_altitude": 38.54675424071512,
-  "moon_distance": 405896.39789071336,
-  "moon_azimuth": 182.30506383152255,
-  "moon_parallactic_angle": 13.822913692056744
+json get_query_astro ( place_t const & pd_, fs::path const & file_, std::string const & date_ ) {
+    json const a = query_url ( ipgeolocation_astronomy_query_string ( pd_.location, date_ ) );
+    std::ofstream o ( file_ );
+    o << a.dump ( g_indent ) << std::endl;
+    o.flush ( );
+    o.close ( );
+    return a;
 }
 
-*/
+// Date in format '2019-08-18'.
+void astro ( std::string const & date_ ) {
+    auto const & current_place = g_geo.places[ g_geo.current ];
+    fs::path const astro_file  = g_app_data_path / ( "astro_" + current_place.place_country + '_' + date_ + ".json" );
+    if ( fs::exists ( astro_file ) )
+        g_astro = load ( astro_file );
+    else
+        g_astro = get_query_astro ( current_place, astro_file, date_ );
+}

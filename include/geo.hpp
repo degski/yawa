@@ -90,3 +90,6 @@ void load_auth ( );
 [[nodiscard]] std::string to_place_country_string ( std::string const & place_country_ );
 
 [[nodiscard]] place_t const & place_data ( std::string const & place_, std::string const & country_ );
+
+// Date in format '2019-08-18'.
+void astro ( std::string const & date_ );

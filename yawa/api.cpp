@@ -37,21 +37,23 @@
 #include <date/tz.h>
 
 #include "api.hpp"
+#include "globals.hpp"
 
 #define Q_( x ) #x
 #define QUOTE( x ) Q_ ( x )
 
-struct integer_tag {};
+struct integer_string_tag {};
 struct kmh_tag {};
 struct percentage_tag {};
 struct real_tag {};
+struct real_string_tag {};
 struct string_tag {};
 struct temperature_tag {};
 struct time_tag {};
 struct ampm_tag {};
 
 template<typename Tag, typename T>
-typename std::enable_if<std::is_same<Tag, integer_tag>::value>::type convert ( json const & f, char const param[], T & t ) {
+typename std::enable_if<std::is_same<Tag, integer_string_tag>::value>::type convert ( json const & f, char const param[], T & t ) {
     if ( f.count ( param ) ) {
         int number = 0;
         f.at ( param ).get_to ( number );
@@ -80,8 +82,14 @@ typename std::enable_if<std::is_same<Tag, percentage_tag>::value>::type convert 
 
 template<typename Tag, typename T>
 typename std::enable_if<std::is_same<Tag, real_tag>::value>::type convert ( json const & f, char const param[], T & t ) {
+    if ( f.count ( param ) )
+        f.at ( param ).get_to ( t );
+}
+
+template<typename Tag, typename T>
+typename std::enable_if<std::is_same<Tag, real_string_tag>::value>::type convert ( json const & f, char const param[], T & t ) {
     if ( f.count ( param ) ) {
-        float number = 0.0f;
+        double number = 0.0;
         f.at ( param ).get_to ( number );
         t = fmt::format ( "{0:.1f}", number );
     }
@@ -117,7 +125,7 @@ void add_12 ( T * const b, T * const e ) noexcept {
 }
 
 void to_24 ( std::string & am_ ) noexcept {
-    if ( 'M' == am_[ 7 ] ) {
+    if ( 'M' == am_[ 7 ] ) { // Check for not "No moonrise" or "No moonset".
         if ( 'P' == am_[ 6 ] )
             add_12 ( am_.data ( ), am_.data ( ) + 2 );
         am_.resize ( 5 );
@@ -143,18 +151,18 @@ void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
         GET_API_DATA ( dewPoint, temperature_tag )
         GET_API_DATA ( humidity, percentage_tag )
         GET_API_DATA ( icon, string_tag )
-        GET_API_DATA ( nearestStormBearing, integer_tag )
-        GET_API_DATA ( nearestStormDistance, integer_tag )
-        GET_API_DATA ( ozone, real_tag )
-        GET_API_DATA ( precipIntensity, real_tag )
+        GET_API_DATA ( nearestStormBearing, integer_string_tag )
+        GET_API_DATA ( nearestStormDistance, integer_string_tag )
+        GET_API_DATA ( ozone, real_string_tag )
+        GET_API_DATA ( precipIntensity, real_string_tag )
         GET_API_DATA ( precipProbability, percentage_tag )
-        GET_API_DATA ( pressure, real_tag )
+        GET_API_DATA ( pressure, real_string_tag )
         GET_API_DATA ( summary, string_tag )
         GET_API_DATA ( temperature, temperature_tag )
         GET_API_DATA ( time, time_tag )
-        GET_API_DATA ( uvIndex, integer_tag )
-        GET_API_DATA ( visibility, real_tag )
-        GET_API_DATA ( windBearing, integer_tag )
+        GET_API_DATA ( uvIndex, integer_string_tag )
+        GET_API_DATA ( visibility, real_string_tag )
+        GET_API_DATA ( windBearing, integer_string_tag )
         GET_API_DATA ( windGust, kmh_tag )
         GET_API_DATA ( windSpeed, kmh_tag )
     }
@@ -175,13 +183,13 @@ void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
             GET_API_DATA ( humidity, percentage_tag )
             GET_API_DATA ( icon, string_tag )
             GET_API_DATA ( moonPhase, percentage_tag )
-            GET_API_DATA ( ozone, real_tag )
-            GET_API_DATA ( precipIntensity, real_tag )
-            GET_API_DATA ( precipIntensityMax, real_tag )
+            GET_API_DATA ( ozone, real_string_tag )
+            GET_API_DATA ( precipIntensity, real_string_tag )
+            GET_API_DATA ( precipIntensityMax, real_string_tag )
             GET_API_DATA ( precipIntensityMaxTime, time_tag )
             GET_API_DATA ( precipProbability, percentage_tag )
             GET_API_DATA ( precipType, string_tag )
-            GET_API_DATA ( pressure, real_tag )
+            GET_API_DATA ( pressure, real_string_tag )
             GET_API_DATA ( summary, string_tag )
             GET_API_DATA ( sunriseTime, time_tag )
             GET_API_DATA ( sunsetTime, time_tag )
@@ -194,10 +202,10 @@ void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
             GET_API_DATA ( temperatureMin, temperature_tag )
             GET_API_DATA ( temperatureMinTime, time_tag )
             GET_API_DATA ( time, time_tag )
-            GET_API_DATA ( uvIndex, integer_tag )
+            GET_API_DATA ( uvIndex, integer_string_tag )
             GET_API_DATA ( uvIndexTime, time_tag )
-            GET_API_DATA ( visibility, real_tag )
-            GET_API_DATA ( windBearing, integer_tag )
+            GET_API_DATA ( visibility, real_string_tag )
+            GET_API_DATA ( windBearing, integer_string_tag )
             GET_API_DATA ( windGust, kmh_tag )
             GET_API_DATA ( windGustTime, time_tag )
             GET_API_DATA ( windSpeed, kmh_tag )
@@ -213,16 +221,16 @@ void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
             GET_API_DATA ( dewPoint, temperature_tag )
             GET_API_DATA ( humidity, percentage_tag )
             GET_API_DATA ( icon, string_tag )
-            GET_API_DATA ( ozone, real_tag )
-            GET_API_DATA ( precipIntensity, real_tag )
+            GET_API_DATA ( ozone, real_string_tag )
+            GET_API_DATA ( precipIntensity, real_string_tag )
             GET_API_DATA ( precipProbability, percentage_tag )
-            GET_API_DATA ( pressure, real_tag )
+            GET_API_DATA ( pressure, real_string_tag )
             GET_API_DATA ( summary, string_tag )
             GET_API_DATA ( temperature, temperature_tag )
             GET_API_DATA ( time, time_tag )
-            GET_API_DATA ( uvIndex, integer_tag )
-            GET_API_DATA ( visibility, real_tag )
-            GET_API_DATA ( windBearing, integer_tag )
+            GET_API_DATA ( uvIndex, integer_string_tag )
+            GET_API_DATA ( visibility, real_string_tag )
+            GET_API_DATA ( windBearing, integer_string_tag )
             GET_API_DATA ( windGust, kmh_tag )
             GET_API_DATA ( windSpeed, kmh_tag )
             ++i;
@@ -254,4 +262,49 @@ void from_json ( json const & j_, DisplayDataApixu & d_ ) {
         }
     }
     d_.update_time = j_.at ( "location" ).at ( "localtime_epoch" ).get<std::time_t> ( );
+}
+
+/*
+
+{
+  "location": {
+    "latitude": 39.79222,
+    "longitude": 19.81449
+  },
+  "date": "2019-08-17",
+  "sunrise": "06:54",
+  "sunset": "20:35",
+  "solar_noon": "13:45",
+  "day_length": "13:41",
+  "sun_altitude": -33.85443500329109,
+  "sun_distance": 151491900.79337415,
+  "sun_azimuth": 22.097752758545425,
+  "moonrise": "21:54",
+  "moonset": "08:25",
+  "moon_altitude": 38.54675424071512,
+  "moon_distance": 405896.39789071336,
+  "moon_azimuth": 182.30506383152255,
+  "moon_parallactic_angle": 13.822913692056744
+}
+
+
+struct DisplayDataAstro { // from ipgeolocation.
+    std::time_t time;
+    std::string sunrise, sunset, moonrise, moonset, day_length;
+    double sun_distance, moon_distance;
+};
+
+*/
+
+void from_json ( json const & j_, DisplayDataAstro & d_ ) {
+    d_.time        = date_to_epoch ( j_.at ( "date" ).get<std::string> ( ) );
+    auto const & f = j_;
+    auto & t       = d_;
+    GET_API_DATA ( sunrise, string_tag )
+    GET_API_DATA ( sunset, string_tag )
+    GET_API_DATA ( moonrise, string_tag )
+    GET_API_DATA ( moonset, string_tag )
+    GET_API_DATA ( day_length, string_tag )
+    GET_API_DATA ( sun_distance, real_tag )
+    GET_API_DATA ( moon_distance, real_tag )
 }

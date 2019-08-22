@@ -97,14 +97,14 @@ namespace fs = std::filesystem;
 #    endif
 #endif
 
-[[nodiscard]] fs::path appDataPath ( std::string && place_ ) noexcept;
+[[nodiscard]] fs::path appDataPath ( std::wstring && place_ ) noexcept;
 [[nodiscard]] fs::path getExePath ( ) noexcept;
 
-inline fs::path const g_app_data_path = appDataPath ( "yawa" );
+inline fs::path const g_app_data_path = appDataPath ( L"yawa" );
 inline fs::path const g_app_path      = getExePath ( );
 
-inline fs::path const g_geo_path  = g_app_data_path / "places.json";
-inline fs::path const g_auth_path = g_app_data_path / "keys.json";
+inline fs::path const g_geo_path  = g_app_data_path / L"places.json";
+inline fs::path const g_auth_path = g_app_data_path / L"keys.json";
 
 inline constexpr int g_indent = 4;
 
@@ -112,6 +112,8 @@ inline geo_t g_geo;
 inline auth_t g_auth;
 
 inline DisplayData g_data;
+
+inline DisplayDataAstro g_astro;
 
 inline bool is_read ( char const file_[] ) noexcept {
     return ( fs::status ( file_ ).permissions ( ) & fs::perms::owner_read ) != fs::perms::none;
@@ -127,6 +129,9 @@ template<typename T>
 [[nodiscard]] T mps_to_kmph ( T const mps_ ) noexcept {
     return mps_ * ( T{ 3'600 } / T{ 1'000 } );
 }
+
+[[nodiscard]] json load ( fs::path const & file_ );
+
 /*
 template<typename T>
 void save_to_file_bin ( T const & t_, fs::path && path_, std::string && file_name_, bool const append_ = false ) noexcept {
@@ -250,6 +255,7 @@ json query_url ( std::string const & url_ );
 [[nodiscard]] std::string get_timestamp_utc_iso8601 ( ) noexcept;
 [[nodiscard]] std::string get_timestamp_hours_utc_iso8601 ( ) noexcept;
 
+// 2019-08-17 to epoch.
 [[nodiscard]] std::time_t date_to_epoch ( std::string const & d_ ) noexcept;
 [[nodiscard]] int local_utc_offset_minutes ( ) noexcept;
 

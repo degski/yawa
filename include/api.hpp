@@ -129,10 +129,42 @@ struct DisplayData {
     DisplayDataApixu apixu;
 
     void normalize_times ( ) noexcept {
-       // for ( auto & d : apixu.daily )
+        // for ( auto & d : apixu.daily )
         //    d.time -= darksky.time.offset;
     }
 };
 
-
 inline void print_time_ ( std::time_t & t_ ) noexcept { std::cout << std::put_time ( std::gmtime ( &t_ ), "%c %R" ); }
+
+/*
+
+{
+  "location": {
+    "latitude": 39.79222,
+    "longitude": 19.81449
+  },
+  "date": "2019-08-17",
+  "sunrise": "06:54",
+  "sunset": "20:35",
+  "solar_noon": "13:45",
+  "day_length": "13:41",
+  "sun_altitude": -33.85443500329109,
+  "sun_distance": 151491900.79337415,
+  "sun_azimuth": 22.097752758545425,
+  "moonrise": "21:54",
+  "moonset": "08:25",
+  "moon_altitude": 38.54675424071512,
+  "moon_distance": 405896.39789071336,
+  "moon_azimuth": 182.30506383152255,
+  "moon_parallactic_angle": 13.822913692056744
+}
+
+*/
+
+struct DisplayDataAstro { // from ipgeolocation.
+    std::time_t time;
+    std::string sunrise, sunset, moonrise, moonset, day_length;
+    double sun_distance, moon_distance;
+};
+
+void from_json ( json const & j_, DisplayDataAstro & d_ );

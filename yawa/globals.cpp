@@ -50,11 +50,11 @@
 
 namespace fs = std::filesystem;
 
-[[nodiscard]] fs::path appDataPath ( std::string && place_ ) noexcept {
-    char * value;
+[[nodiscard]] fs::path appDataPath ( std::wstring && place_ ) noexcept {
+    wchar_t * value;
     std::size_t len;
-    _dupenv_s ( &value, &len, "USERPROFILE" );
-    fs::path return_value ( std::string ( value ) + std::string ( "\\AppData\\Roaming\\" + place_ ) );
+    _wdupenv_s ( &value, &len, L"USERPROFILE" );
+    fs::path return_value ( std::wstring ( value ) + std::wstring ( L"\\AppData\\Roaming\\" + place_ ) );
     fs::create_directory ( return_value ); // No error if directory exists.
     return return_value;
 }
@@ -63,6 +63,14 @@ namespace fs = std::filesystem;
     TCHAR exename[ 1024 ];
     GetModuleFileName ( NULL, exename, 1'024 );
     return fs::path ( exename ).parent_path ( );
+}
+
+json load ( fs::path const & file_ ) {
+    json a;
+    std::ifstream i ( file_ );
+    i >> a;
+    i.close ( );
+    return a;
 }
 
 std::string get_timestamp_iso8601 ( ) noexcept {
@@ -106,6 +114,10 @@ std::string get_timestamp ( ) noexcept {
     return s;
 }
 
+#if _WIN32
+#    define timegm _mkgmtime
+#endif
+
 // 2019-08-17 to epoch.
 std::time_t date_to_epoch ( std::string const & d_ ) noexcept {
     std::tm tm = {};
@@ -114,17 +126,20 @@ std::time_t date_to_epoch ( std::string const & d_ ) noexcept {
     std::from_chars ( d_.data ( ) + 5, d_.data ( ) + 7, tm.tm_mon );
     tm.tm_mon -= 1;
     std::from_chars ( d_.data ( ) + 8, d_.data ( ) + 10, tm.tm_mday );
-    tm.tm_isdst = -1;
-    int offset  = local_utc_offset_minutes ( );
-    tm.tm_hour  = offset / 60;
-    tm.tm_min   = offset % 60;
-    return std::mktime ( &tm );
+    return timegm ( &tm );
 }
 
-// https://stackoverflow.com/a/32433990/646940
-
 int local_utc_offset_minutes ( ) noexcept {
-    std::time_t t = std::time ( nullptr );
+    std::time_t t  = std::time ( nullptr );
+    std::tm * locg = std::localtime ( &t );
+    std::tm locl;
+    std::memcpy ( &locl, locg, sizeof ( std::tm ) );
+    return ( timegm ( locg ) - mktime ( &locl ) ) / 60;
+
+    /*
+
+    // https://stackoverflow.com/a/32433990/646940
+
     std::tm * loc = std::localtime ( &t );
     // save values because they could be erased by the call to gmtime.
     int loc_min   = loc->tm_min;
@@ -135,12 +150,17 @@ int local_utc_offset_minutes ( ) noexcept {
     int delta_day = loc_day - utc->tm_mday;
     delta_min += ( loc_hour - utc->tm_hour ) * 60;
     // hack for the day because the difference actually is only 0, 1 or -1.
-    if ( ( delta_day == 1 ) or ( delta_day < -1 ) )
+    if ( delta_day == 1 or delta_day < -1 )
         delta_min += 1'440;
-    else if ( ( delta_day == -1 ) or ( delta_day > 1 ) )
+    else if ( delta_day == -1 or delta_day > 1 )
         delta_min -= 1'440;
     return delta_min;
+    */
 }
+
+#if _WIN32
+#    undef timegm
+#endif
 
 json query_url ( std::string const & url_ ) {
     std::stringstream ss;

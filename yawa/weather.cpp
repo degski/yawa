@@ -60,29 +60,13 @@ json forcast_query_darksky ( place_t const & pd_, fs::path const & file_ ) {
     return forcast;
 }
 
-json forcast_load_apixu ( fs::path const & file_ ) {
-    json forcast;
-    std::ifstream i ( file_ );
-    i >> forcast;
-    i.close ( );
-    return forcast;
-}
-
-json forcast_load_darksky ( fs::path const & file_ ) {
-    json forcast;
-    std::ifstream i ( file_ );
-    i >> forcast;
-    i.close ( );
-    return forcast;
-}
-
 void forcast ( ) {
     auto const & current_place = g_geo.places[ g_geo.current ];
     // darksky.
     fs::path const darksky_file = g_app_data_path / ( "darksky_" + current_place.place_country + ".json" );
     if ( not g_data.darksky.update_time ) {
         if ( fs::exists ( darksky_file ) )
-            g_data.darksky = forcast_load_darksky ( darksky_file );
+            g_data.darksky = load ( darksky_file );
         else
             g_data.darksky = forcast_query_darksky ( current_place, darksky_file );
     }
@@ -92,7 +76,7 @@ void forcast ( ) {
     fs::path const apixu_file = g_app_data_path / ( "apixu_" + current_place.place_country + ".json" );
     if ( not g_data.apixu.update_time ) {
         if ( fs::exists ( apixu_file ) )
-            g_data.apixu = forcast_load_apixu ( apixu_file );
+            g_data.apixu = load ( apixu_file );
         else
             g_data.apixu = forcast_query_apixu ( current_place, apixu_file );
     }
