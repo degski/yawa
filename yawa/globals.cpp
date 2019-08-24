@@ -119,7 +119,7 @@ std::string get_timestamp ( ) noexcept {
 #endif
 
 // 2019-08-17 to epoch.
-std::time_t date_to_epoch ( std::string const & d_ ) noexcept {
+std::time_t date_to_epoch ( std::string_view const & d_ ) noexcept {
     std::tm tm = {};
     std::from_chars ( d_.data ( ), d_.data ( ) + 4, tm.tm_year );
     tm.tm_year -= 1'900;

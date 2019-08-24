@@ -28,6 +28,9 @@
 #include <sstream>
 #include <string>
 
+#include <fmt/core.h>
+#include <fmt/format.h>
+
 #include "globals.hpp"
 
 std::string darksky_forcast_query_string ( location_t const & loc_ ) {
@@ -62,8 +65,9 @@ json forcast_query_darksky ( place_t const & pd_, fs::path const & file_ ) {
 
 void forcast ( ) {
     auto const & current_place = g_geo.places[ g_geo.current ];
+    std::wstring const fn_json = fmt::to_wstring ( current_place.place_country + ".json" );
     // darksky.
-    fs::path const darksky_file = g_app_data_path / ( "darksky_" + current_place.place_country + ".json" );
+    fs::path const darksky_file = g_app_data_path / ( L"darksky_" + fn_json );
     if ( not g_data.darksky.update_time ) {
         if ( fs::exists ( darksky_file ) )
             g_data.darksky = load ( darksky_file );
@@ -73,7 +77,7 @@ void forcast ( ) {
     if ( g_data.darksky.is_stale ( ) )
         g_data.darksky = forcast_query_darksky ( current_place, darksky_file );
     // apixu.
-    fs::path const apixu_file = g_app_data_path / ( "apixu_" + current_place.place_country + ".json" );
+    fs::path const apixu_file = g_app_data_path / ( L"apixu_" + fn_json );
     if ( not g_data.apixu.update_time ) {
         if ( fs::exists ( apixu_file ) )
             g_data.apixu = load ( apixu_file );

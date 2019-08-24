@@ -29,6 +29,7 @@
 
 #include <charconv>
 #include <chrono>
+#include <string_view>
 #include <type_traits>
 
 #include <fmt/core.h>
@@ -297,7 +298,7 @@ struct DisplayDataAstro { // from ipgeolocation.
 */
 
 void from_json ( json const & j_, DisplayDataAstro & d_ ) {
-    d_.time        = date_to_epoch ( j_.at ( "date" ).get<std::string> ( ) );
+    d_.time        = date_to_epoch ( j_.at ( "date" ).get<std::string_view> ( ) );
     auto const & f = j_;
     auto & t       = d_;
     GET_API_DATA ( sunrise, string_tag )

@@ -30,6 +30,7 @@
 #include <sax/iostream.hpp>
 #include <sstream>
 #include <string>
+#include <string_view>
 
 namespace fs = std::filesystem;
 
@@ -131,7 +132,7 @@ json query_url ( std::string const & url_ );
 [[nodiscard]] std::string get_timestamp_hours_utc_iso8601 ( ) noexcept;
 
 // 2019-08-17 to epoch.
-[[nodiscard]] std::time_t date_to_epoch ( std::string const & d_ ) noexcept;
+[[nodiscard]] std::time_t date_to_epoch ( std::string_view const & d_ ) noexcept;
 
 std::string get_timestamp ( ) noexcept;
 
