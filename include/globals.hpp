@@ -34,6 +34,7 @@
 namespace fs = std::filesystem;
 
 #include <fmt/core.h>
+#include <fmt/format.h>
 
 #include "geo.hpp"
 
@@ -105,10 +106,10 @@ inline DisplayData g_data;
 
 inline DisplayDataAstro g_astro;
 
-inline bool is_read ( char const file_[] ) noexcept {
+inline bool is_read ( wchar_t const file_[] ) noexcept {
     return ( fs::status ( file_ ).permissions ( ) & fs::perms::owner_read ) != fs::perms::none;
 }
-inline bool is_write ( char const file_[] ) noexcept {
+inline bool is_write ( wchar_t const file_[] ) noexcept {
     return ( fs::status ( file_ ).permissions ( ) & fs::perms::owner_write ) != fs::perms::none;
 }
 

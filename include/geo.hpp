@@ -85,7 +85,7 @@ void load_geo ( );
 void save_auth ( );
 void load_auth ( );
 
-[[nodiscard]] std::string load_file ( std::string const & filename );
+[[nodiscard]] std::string load_file ( std::wstring const & filename );
 
 [[nodiscard]] std::string to_place_country_string ( std::string const & place_country_ );
 

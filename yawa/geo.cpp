@@ -29,6 +29,7 @@
 #include <sax/iostream.hpp>
 #include <sstream>
 #include <string>
+#include <string_view>
 
 #include "globals.hpp"
 
@@ -47,7 +48,7 @@ std::string ipgeolocation_timezone_query_string ( location_t const & loc_ ) {
     return { url + g_auth[ "ipgeolocation" ] + "&lat=" + loc_.lat + "&long=" + loc_.lng };
 }
 
-std::string load_file ( std::string const & filename ) {
+std::string load_file ( std::wstring const & filename ) {
     std::string str;
     if ( std::ifstream is{ filename, std::ios::ate } ) {
         std::size_t const size = static_cast<std::size_t> ( is.tellg ( ) );
@@ -134,7 +135,7 @@ place_t const & place_data ( std::string const & place_, std::string const & cou
     auto it                         = g_geo.places.find ( place_country_query );
     if ( std::cend ( g_geo.places ) == it ) {
         json const location_query_result = query_url ( location_query_string ( place_country_query ) );
-        if ( "OK" == location_query_result[ "status" ] ) {
+        if ( not std::strncmp ( "OK", location_query_result[ "status" ].get<std::string_view> ( ).data ( ), 2u ) ) {
             auto const location = location_query_result[ "results" ][ 0 ][ "geometry" ][ "location" ];
             place_t data{ { to_string ( location[ "lat" ].get<float> ( ) ), to_string ( location[ "lng" ].get<float> ( ) ) },
                           "",
@@ -167,7 +168,8 @@ json get_query_astro ( place_t const & pd_, fs::path const & file_, std::string 
 // Date in format '2019-08-18'.
 void astro ( std::string const & date_ ) {
     auto const & current_place = g_geo.places[ g_geo.current ];
-    fs::path const astro_file  = g_app_data_path / ( "astro_" + current_place.place_country + '_' + date_ + ".json" );
+    fs::path const astro_file =
+        g_app_data_path / ( L"astro_" + fmt::to_wstring ( current_place.place_country + '_' + date_ ) + L".json" );
     if ( fs::exists ( astro_file ) )
         g_astro = load ( astro_file );
     else
