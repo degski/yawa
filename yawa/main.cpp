@@ -146,12 +146,6 @@ int main ( ) {
 
     try {
 
-        astro ( "2019-09-23" );
-
-        std::cout << g_astro.sun_distance << nl;
-
-        return 0;
-
         forcast ( );
 
         std::cout << "Current Time UTC " << print_time ( std::time ( nullptr ) ) << nl;

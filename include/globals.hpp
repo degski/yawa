@@ -32,16 +32,6 @@
 #include <string>
 
 namespace fs = std::filesystem;
-/*
-#include <cereal/cereal.hpp>
-
-#include <cereal/archives/binary.hpp>
-#include <cereal/archives/json.hpp>
-#include <cereal/archives/xml.hpp>
-
-#include <cereal/types/map.hpp>
-#include <cereal/types/string.hpp>
-*/
 
 #include <fmt/core.h>
 
@@ -132,122 +122,6 @@ template<typename T>
 
 [[nodiscard]] json load ( fs::path const & file_ );
 
-/*
-template<typename T>
-void save_to_file_bin ( T const & t_, fs::path && path_, std::string && file_name_, bool const append_ = false ) noexcept {
-    std::ofstream ostream ( path_ / ( file_name_ + std::string ( ".cereal" ) ),
-                            append_ ? std::ios::binary | std::ios::app | std::ios::out : std::ios::binary | std::ios::out );
-    {
-        cereal::BinaryOutputArchive archive ( ostream );
-        archive ( t_ );
-    }
-    ostream.flush ( );
-    ostream.close ( );
-}
-
-template<typename T>
-void load_from_file_bin ( T & t_, fs::path && path_, std::string && file_name_ ) noexcept {
-    std::ifstream istream ( path_ / ( file_name_ + std::string ( ".cereal" ) ), std::ios::binary );
-    {
-        cereal::BinaryInputArchive archive ( istream );
-        archive ( t_ );
-    }
-    istream.close ( );
-}
-
-template<typename T>
-void save_to_file_xml ( std::string const & object_name_, T const & t_, fs::path && path_, std::string && file_name_,
-                        bool const append_ = false ) noexcept {
-    std::ofstream ostream ( path_ / ( file_name_ + std::string ( ".xmlcereal" ) ),
-                            append_ ? std::ios::app | std::ios::out : std::ios::out );
-    {
-        cereal::XMLOutputArchive archive ( ostream );
-        archive ( cereal::make_nvp ( object_name_, t_ ) );
-    }
-    ostream.flush ( );
-    ostream.close ( );
-}
-
-template<typename T>
-void load_from_file_xml ( std::string const & object_name_, T & t_, fs::path && path_, std::string && file_name_ ) noexcept {
-    std::ifstream istream ( path_ / ( file_name_ + std::string ( ".xmlcereal" ) ) );
-    {
-        cereal::XMLInputArchive archive ( istream );
-        archive ( cereal::make_nvp ( object_name_, t_ ) );
-    }
-    istream.close ( );
-}
-
-void save_to_file ( json const & j_, std::string const & name_ );
-void load_from_file ( json & j_, std::string const & name_ );
-[[nodiscard]] json load_from_file ( std::string const & name_ );
-
-template<typename T>
-void save_to_file_json ( std::string const & object_name_, T const & t_, fs::path && path_, std::string && file_name_,
-                         bool const append_ = false ) noexcept {
-    std::ofstream ostream ( path_ / ( file_name_ + std::string ( ".json" ) ),
-                            append_ ? std::ios::app | std::ios::out : std::ios::out );
-    {
-        cereal::JSONOutputArchive archive ( ostream );
-        archive ( cereal::make_nvp ( object_name_, t_ ) );
-    }
-    ostream.flush ( );
-    ostream.close ( );
-}
-
-template<typename T>
-void load_from_file_json ( std::string const & object_name_, T & t_, fs::path && path_, std::string && file_name_ ) noexcept {
-    std::ifstream istream ( path_ / ( file_name_ + std::string ( ".json" ) ) );
-    {
-        cereal::JSONInputArchive archive ( istream );
-        archive ( cereal::make_nvp ( object_name_, t_ ) );
-    }
-    istream.close ( );
-}
-
-template<typename T>
-void save_to_file_json ( std::string const & object_name_, T const & t_, fs::path const & path_,
-                         bool const append_ = false ) noexcept {
-    std::ofstream ostream ( path_, append_ ? std::ios::app | std::ios::out : std::ios::out );
-    {
-        cereal::JSONOutputArchive archive ( ostream );
-        archive ( cereal::make_nvp ( object_name_, t_ ) );
-    }
-    ostream.flush ( );
-    ostream.close ( );
-}
-
-template<typename T>
-void load_from_file_json ( std::string const & object_name_, T & t_, fs::path const & path_ ) noexcept {
-    std::ifstream istream ( path_ );
-    {
-        cereal::JSONInputArchive archive ( istream );
-        archive ( cereal::make_nvp ( object_name_, t_ ) );
-    }
-    istream.close ( );
-}
-
-template<typename T>
-void save_to_file_json ( char const object_name_[], T const & t_, char const file_[], bool const append_ = false ) noexcept {
-    std::ofstream ostream ( file_, append_ ? std::ios::app | std::ios::out : std::ios::out );
-    {
-        cereal::JSONOutputArchive archive ( ostream );
-        archive ( cereal::make_nvp ( object_name_, t_ ) );
-    }
-    ostream.flush ( );
-    ostream.close ( );
-}
-
-template<typename T>
-void load_from_file_json ( char const object_name_[], T & t_, char const file_[] ) noexcept {
-    std::ifstream istream ( file_ );
-    {
-        cereal::JSONInputArchive archive ( istream );
-        archive ( cereal::make_nvp ( object_name_, t_ ) );
-    }
-    istream.close ( );
-}
-*/
 json query_url ( std::string const & url_ );
 
 [[nodiscard]] std::string get_timestamp_iso8601 ( ) noexcept;
@@ -257,7 +131,6 @@ json query_url ( std::string const & url_ );
 
 // 2019-08-17 to epoch.
 [[nodiscard]] std::time_t date_to_epoch ( std::string const & d_ ) noexcept;
-[[nodiscard]] int local_utc_offset_minutes ( ) noexcept;
 
 std::string get_timestamp ( ) noexcept;
 

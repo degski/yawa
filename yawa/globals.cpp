@@ -129,35 +129,6 @@ std::time_t date_to_epoch ( std::string const & d_ ) noexcept {
     return timegm ( &tm );
 }
 
-int local_utc_offset_minutes ( ) noexcept {
-    std::time_t t  = std::time ( nullptr );
-    std::tm * locg = std::localtime ( &t );
-    std::tm locl;
-    std::memcpy ( &locl, locg, sizeof ( std::tm ) );
-    return ( timegm ( locg ) - mktime ( &locl ) ) / 60;
-
-    /*
-
-    // https://stackoverflow.com/a/32433990/646940
-
-    std::tm * loc = std::localtime ( &t );
-    // save values because they could be erased by the call to gmtime.
-    int loc_min   = loc->tm_min;
-    int loc_hour  = loc->tm_hour;
-    int loc_day   = loc->tm_mday;
-    std::tm * utc = std::gmtime ( &t );
-    int delta_min = loc_min - utc->tm_min;
-    int delta_day = loc_day - utc->tm_mday;
-    delta_min += ( loc_hour - utc->tm_hour ) * 60;
-    // hack for the day because the difference actually is only 0, 1 or -1.
-    if ( delta_day == 1 or delta_day < -1 )
-        delta_min += 1'440;
-    else if ( delta_day == -1 or delta_day > 1 )
-        delta_min -= 1'440;
-    return delta_min;
-    */
-}
-
 #if _WIN32
 #    undef timegm
 #endif
