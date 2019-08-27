@@ -25,11 +25,13 @@
 #include <fstream>
 #include <limits>
 #include <sax/iostream.hpp>
+#include <sax/utf8conv.hpp>
 #include <sstream>
 #include <string>
 
+#define FMT_USE_GRISU 1
 #include <fmt/core.h>
-#include <fmt/format.h>
+#include <fmt/format.h> // fmt::to_wstring
 
 #include "globals.hpp"
 
@@ -65,7 +67,7 @@ json forcast_query_darksky ( place_t const & pd_, fs::path const & file_ ) {
 
 void forcast ( ) {
     auto const & current_place = g_geo.places[ g_geo.current ];
-    std::wstring const fn_json = fmt::to_wstring ( current_place.place_country + ".json" );
+    std::wstring const fn_json = sax::utf8_to_utf16 ( current_place.place_country + ".json" );
     // darksky.
     fs::path const darksky_file = g_app_data_path / ( L"darksky_" + fn_json );
     if ( not g_data.darksky.update_time ) {

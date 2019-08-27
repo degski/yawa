@@ -27,14 +27,13 @@
 #include <limits>
 #include <locale>
 #include <sax/iostream.hpp>
+#include <sax/utf8conv.hpp>
 #include <sstream>
 #include <string>
 #include <string_view>
 
 #include "globals.hpp"
-
 #include "api.hpp"
-
 #include "geo.hpp"
 
 // Date has to be in format '2019-08-16'.
@@ -169,7 +168,7 @@ json get_query_astro ( place_t const & pd_, fs::path const & file_, std::string 
 void astro ( std::string const & date_ ) {
     auto const & current_place = g_geo.places[ g_geo.current ];
     fs::path const astro_file =
-        g_app_data_path / ( L"astro_" + fmt::to_wstring ( current_place.place_country + '_' + date_ ) + L".json" );
+        g_app_data_path / ( L"astro_" + sax::utf8_to_utf16 ( current_place.place_country + '_' + date_ ) + L".json" );
     if ( fs::exists ( astro_file ) )
         g_astro = load ( astro_file );
     else

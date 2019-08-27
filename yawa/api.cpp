@@ -32,6 +32,7 @@
 #include <string_view>
 #include <type_traits>
 
+#define FMT_USE_GRISU 1
 #include <fmt/core.h>
 
 #include <date/date.h>
@@ -77,7 +78,7 @@ typename std::enable_if<std::is_same<Tag, percentage_tag>::value>::type convert 
         float number = 0.0f;
         f.at ( param ).get_to ( number );
         number *= 100.0f;
-        t = fmt::format ( "{0:.0f}%", number );
+        t = fmt::format ( "{0:.0%}", number );
     }
 }
 

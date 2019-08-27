@@ -34,6 +34,7 @@
 
 namespace fs = std::filesystem;
 
+#define FMT_USE_GRISU 1
 #include <fmt/core.h>
 #include <fmt/format.h>
 

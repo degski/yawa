@@ -39,7 +39,6 @@
 #include <thread>
 
 #include <curlpp/cURLpp.hpp>
-
 #include <curlpp/Easy.hpp>
 #include <curlpp/Options.hpp>
 
