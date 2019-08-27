@@ -115,8 +115,8 @@ inline bool is_write ( wchar_t const file_[] ) noexcept {
     return ( fs::status ( file_ ).permissions ( ) & fs::perms::owner_write ) != fs::perms::none;
 }
 
-[[nodiscard]] inline std::string to_string ( int const v_ ) noexcept { return fmt::format ( "{0:}", v_ ); }
-[[nodiscard]] inline std::string to_string ( float const v_ ) noexcept { return fmt::format ( "{0:f}", v_ ); }
+[[nodiscard]] inline std::string to_string ( int const v_ ) noexcept { return fmt::format ( "{}", v_ ); }
+[[nodiscard]] inline std::string to_string ( float const v_ ) noexcept { return fmt::format ( "{f}", v_ ); }
 
 template<typename T>
 [[nodiscard]] T mps_to_kmph ( T const mps_ ) noexcept {
