@@ -59,7 +59,7 @@ namespace fs = std::filesystem;
 }
 
 [[nodiscard]] fs::path getExePath ( ) noexcept {
-    TCHAR exename[ 1024 ];
+    TCHAR exename[ 1'024 ];
     GetModuleFileName ( NULL, exename, 1'024 );
     return fs::path ( exename ).parent_path ( );
 }
