@@ -105,32 +105,12 @@ struct DisplayDataDarksky {
     [[nodiscard]] bool is_updated ( ) noexcept { return not is_stale ( ); }
 };
 
-struct DisplayDataApixuDay {
-    // apixu.
-    std::string sunrise, sunset, moonrise, moonset;
-    std::time_t time;
-};
-
-using DisplayDataApixuDaily = std::array<DisplayDataApixuDay, 7>;
-
-struct DisplayDataApixu {
-    DisplayDataApixuDaily daily;
-    std::time_t update_time = 0u;
-
-    [[nodiscard]] bool is_stale ( ) noexcept { return ( std::time ( nullptr ) - update_time ) > ( 3'600u * 24 ); }
-    [[nodiscard]] bool is_updated ( ) noexcept { return not is_stale ( ); }
-};
-
 void from_json ( json const & j_, DisplayDataDarksky & d_ );
-void from_json ( json const & j_, DisplayDataApixu & d_ );
 
 struct DisplayData {
     DisplayDataDarksky darksky;
-    DisplayDataApixu apixu;
 
     void normalize_times ( ) noexcept {
-        // for ( auto & d : apixu.daily )
-        //    d.time -= darksky.time.offset;
     }
 };
 

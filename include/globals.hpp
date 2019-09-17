@@ -47,7 +47,7 @@ namespace fs = std::filesystem;
 #    pragma comment( lib, "Crypt32.lib" )
 #    pragma comment( lib, "winmm.lib" )
 #    pragma comment( lib, "wldap32.lib" )
-#    if not defined( NDEBUG )
+#    ifndef NDEBUG
 #        pragma comment( lib, "zlibd.lib" )
 #        pragma comment( lib, "libcurl-d.lib" )
 #        pragma comment( lib, "fmtd.lib" )
@@ -72,7 +72,7 @@ namespace fs = std::filesystem;
 #        pragma comment( lib, "brotlicommon-static.lib" )
 #        pragma comment( lib, "brotlidec-static.lib" )
 #        pragma comment( lib, "brotlienc-static.lib" )
-#        if not defined( NDEBUG )
+#        ifndef NDEBUG
 #            pragma comment( lib, "zlibd.lib" )
 #            pragma comment( lib, "boost_system-vc140-mt-gd.lib" )
 #            pragma comment( lib, "boost_date_time-vc140-mt-gd.lib" )

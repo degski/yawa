@@ -153,7 +153,6 @@ int main ( ) {
         std::cout << nl;
 
         std::cout << "D " << print_time ( g_data.darksky.update_time ) << nl;
-        std::cout << "A " << print_time ( g_data.apixu.update_time ) << nl;
 
         std::cout << nl;
 
@@ -172,12 +171,6 @@ int main ( ) {
 
         std::cout << nl;
 
-        i = 0;
-
-        for ( auto & d : g_data.apixu.daily ) {
-            std::cout << i++ << ' ' << print_time ( d.time ) << nl;
-        }
-        std::cout << nl;
 
         /*
         while ( app.is_active ( ) ) {

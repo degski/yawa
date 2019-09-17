@@ -249,23 +249,6 @@ void from_json ( json const & j_, DisplayDataDarksky & d_ ) {
     d_.update_time = d_.current.time;
 }
 
-void from_json ( json const & j_, DisplayDataApixu & d_ ) {
-    {
-        int i = 0;
-        for ( auto const & f_ : j_.at ( "forecast" ).at ( "forecastday" ) ) {
-            auto const & f = f_.at ( "astro" );
-            auto & t       = d_.daily[ i ];
-            GET_API_DATA ( sunrise, ampm_tag )
-            GET_API_DATA ( sunset, ampm_tag )
-            GET_API_DATA ( moonrise, ampm_tag )
-            GET_API_DATA ( moonset, ampm_tag )
-            f_.at ( "date_epoch" ).get_to ( t.time );
-            ++i;
-        }
-    }
-    d_.update_time = j_.at ( "location" ).at ( "localtime_epoch" ).get<std::time_t> ( );
-}
-
 /*
 
 {
