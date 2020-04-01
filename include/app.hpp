@@ -1,7 +1,7 @@
 
 // MIT License
 //
-// Copyright (c) 2019 degski
+// Copyright (c) 2019, 2020 degski
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,15 @@
 #pragma once
 
 #include <map>
+#include <string>
 
 #include <SFML/Graphics.hpp>
 
 #include <curlpp/cURLpp.hpp>
 
 #include "resource.h"
+
+[[nodiscard]] std::string calendar ( int const y_, int const m_ ) noexcept;
 
 struct App {
 
@@ -88,8 +91,16 @@ struct App {
 
     inline void render_objects ( ) noexcept {
         m_render_window.clear ( sf::Color::Transparent );
+        /*
         auto & s = m_icon_textures[ "day-sunny" ].sprite;
         m_render_window.draw ( s );
+        */
+        sf::Text t;
+        t.setFont ( m_font_mono );
+        t.setCharacterSize ( 14u );
+        t.setString ( calendar ( 2019, 12 ) );
+        m_render_window.draw ( t );
+
         m_render_window.display ( );
     }
 };

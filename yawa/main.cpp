@@ -1,7 +1,7 @@
 
 // MIT License
 //
-// Copyright (c) 2019 degski
+// Copyright (c) 2019, 2020 degski
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -146,6 +146,8 @@ int main ( ) {
 
     try {
 
+        /*
+
         forcast ( );
 
         std::cout << "Current Time UTC " << print_time ( std::time ( nullptr ) ) << nl;
@@ -171,12 +173,11 @@ int main ( ) {
 
         std::cout << nl;
 
+        */
 
-        /*
         while ( app.is_active ( ) ) {
             app.run ( );
         }
-        */
     }
     catch ( ... ) {
         eptr = std::current_exception ( ); // Capture.
@@ -234,7 +235,7 @@ int main5 ( ) {
     return EXIT_SUCCESS;
 }
 
-int main6567 ( ) {
+int main984 ( ) {
 
     auto & db = date::get_tzdb_list ( );
 
@@ -334,6 +335,127 @@ int main ( int argc, char * argv[] ) {
     }
 
     return 0;
+}
+
+#endif
+
+#if 0
+
+#    ifndef WIN32_LEAN_AND_MEAN
+#        define WIN32_LEAN_AND_MEAN
+#    endif
+#    include <Windows.h>
+
+//
+//
+// WndProc - Window procedure
+//
+//
+LRESULT
+CALLBACK
+WndProc ( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam ) {
+    switch ( uMsg ) {
+        case WM_DESTROY: ::PostQuitMessage ( 0 ); break;
+        default: return ::DefWindowProc ( hWnd, uMsg, wParam, lParam );
+    }
+
+    return 0;
+}
+
+HWND gw ( ) {
+
+    HINSTANCE hInstance = ( HINSTANCE ) GetModuleHandle ( NULL );
+
+    WNDCLASSEX wcex;
+    ZeroMemory ( &wcex, sizeof ( wcex ) );
+
+    wcex.cbSize        = sizeof ( wcex );                     // WNDCLASSEX size in bytes
+    wcex.style         = CS_HREDRAW | CS_VREDRAW;             // Window class styles
+    wcex.lpszClassName = TEXT ( "MYFIRSTWINDOWCLASS" );       // Window class name
+    wcex.hbrBackground = ( HBRUSH ) ( COLOR_WINDOW + 1 );     // Window background brush color.
+    wcex.hCursor       = LoadCursor ( hInstance, IDC_ARROW ); // Window cursor
+    wcex.lpfnWndProc   = WndProc1;                            // Window procedure associated to this window class.
+    wcex.hInstance     = hInstance;                           // The application instance.
+
+    // Register window and ensure registration success.
+    if ( !RegisterClassEx ( &wcex ) )
+        return 1;
+
+    // Setup window initialization attributes.
+    CREATESTRUCT cs;
+    ZeroMemory ( &cs, sizeof ( cs ) );
+
+    cs.x         = 0;                          // Window X position
+    cs.y         = 0;                          // Window Y position
+    cs.cx        = 640;                        // Window width
+    cs.cy        = 480;                        // Window height
+    cs.hInstance = hInstance;                  // Window instance.
+    cs.lpszClass = wcex.lpszClassName;         // Window class name
+    cs.lpszName  = TEXT ( "My First Window" ); // Window title
+    cs.style     = WS_OVERLAPPEDWINDOW;        // Window style
+
+    // Create the window.
+    return ::CreateWindowEx ( cs.dwExStyle, cs.lpszClass, cs.lpszName, cs.style, cs.x, cs.y, cs.cx, cs.cy, cs.hwndParent, cs.hMenu,
+                              cs.hInstance, cs.lpCreateParams );
+}
+
+//
+//
+// WinMain - Win32 application entry point.
+//
+//
+int APIENTRY wWinMain ( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nShowCmd ) {
+    // Setup window class attributes.
+    WNDCLASSEX wcex;
+    ZeroMemory ( &wcex, sizeof ( wcex ) );
+
+    wcex.cbSize        = sizeof ( wcex );                     // WNDCLASSEX size in bytes
+    wcex.style         = CS_HREDRAW | CS_VREDRAW;             // Window class styles
+    wcex.lpszClassName = TEXT ( "MYFIRSTWINDOWCLASS" );       // Window class name
+    wcex.hbrBackground = ( HBRUSH ) ( COLOR_WINDOW + 1 );     // Window background brush color.
+    wcex.hCursor       = LoadCursor ( hInstance, IDC_ARROW ); // Window cursor
+    wcex.lpfnWndProc   = WndProc;                             // Window procedure associated to this window class.
+    wcex.hInstance     = hInstance;                           // The application instance.
+
+    // Register window and ensure registration success.
+    if ( !RegisterClassEx ( &wcex ) )
+        return 1;
+
+    // Setup window initialization attributes.
+    CREATESTRUCT cs;
+    ZeroMemory ( &cs, sizeof ( cs ) );
+
+    cs.x         = 0;                          // Window X position
+    cs.y         = 0;                          // Window Y position
+    cs.cx        = 640;                        // Window width
+    cs.cy        = 480;                        // Window height
+    cs.hInstance = hInstance;                  // Window instance.
+    cs.lpszClass = wcex.lpszClassName;         // Window class name
+    cs.lpszName  = TEXT ( "My First Window" ); // Window title
+    cs.style     = WS_OVERLAPPEDWINDOW;        // Window style
+
+    // Create the window.
+    HWND hWnd = ::CreateWindowEx ( cs.dwExStyle, cs.lpszClass, cs.lpszName, cs.style, cs.x, cs.y, cs.cx, cs.cy, cs.hwndParent,
+                                   cs.hMenu, cs.hInstance, cs.lpCreateParams );
+
+    // Validate window.
+    if ( !hWnd )
+        return 1;
+
+    // Display the window.
+    ::ShowWindow ( hWnd, SW_SHOWDEFAULT );
+    ::UpdateWindow ( hWnd );
+
+    // Main message loop.
+    MSG msg;
+    while ( ::GetMessage ( &msg, hWnd, 0, 0 ) > 0 )
+        ::DispatchMessage ( &msg );
+
+    // Unregister window class, freeing the memory that was
+    // previously allocated for this window.
+    ::UnregisterClass ( wcex.lpszClassName, hInstance );
+
+    return ( int ) msg.wParam;
 }
 
 #endif
